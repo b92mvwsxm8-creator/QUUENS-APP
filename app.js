@@ -5,23 +5,15 @@ let timerInterval;
 let startTime;
 
 function initGame() {
-    const sizeSelect = document.getElementById('gridSize');
-    const diffSelect = document.getElementById('difficulty');
-    const size = sizeSelect ? parseInt(sizeSelect.value) : 10;
-    const difficulty = diffSelect ? diffSelect.value : 'expert';
-    
+    const size = 10;
+    const difficulty = 'expert';
     queens.clear();
     marks.clear();
     if (timerInterval) clearInterval(timerInterval);
-
-    if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
+    if (typeof SHAPES !== 'undefined' && SHAPES.length > 0) {
         const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         currentPuzzle = { size: 10, regions: shape.regions };
-    } else if (typeof PUZZLES !== 'undefined') {
-        const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
-        currentPuzzle = { size: pData.size, regions: pData.regions };
     }
-    
     render();
     startTimer();
 }
@@ -29,17 +21,14 @@ function initGame() {
 function render() {
     const board = document.getElementById('board');
     if (!board || !currentPuzzle) return;
-    
     board.style.gridTemplateColumns = `repeat(${currentPuzzle.size}, 1fr)`;
     board.innerHTML = "";
-
     for (let r = 0; r < currentPuzzle.size; r++) {
         for (let c = 0; c < currentPuzzle.size; c++) {
             const cell = document.createElement("div");
             cell.className = "cell";
             const regionId = currentPuzzle.regions[r][c];
             cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 80%)`;
-            
             cell.onclick = () => handleMove(r, c);
             board.appendChild(cell);
         }
@@ -65,15 +54,10 @@ function updateUI() {
         const r = Math.floor(i / currentPuzzle.size);
         const c = i % currentPuzzle.size;
         const key = `${r},${c}`;
-        
-        cell.classList.remove("has-queen", "has-mark");
         cell.textContent = ""; 
-        
         if (queens.has(key)) {
-            cell.classList.add("has-queen");
             cell.textContent = "Q"; 
         } else if (marks.has(key)) {
-            cell.classList.add("has-mark");
             cell.textContent = "X"; 
         }
     });
