@@ -5,6 +5,14 @@ let timerInterval;
 let startTime;
 let currentDifficulty = 'hard';
 
+// Studie-gebaseerde patronen voor Expert-modus
+const SHAPES = [
+    { name: "Blossom", cells: [[3,3],[2,3],[4,3],[3,2],[3,4]] },
+    { name: "Diamond", cells: [[1,3],[2,2],[2,4],[3,1],[3,5],[4,2],[4,4],[5,3]] },
+    { name: "Snake", cells: [[1,1],[1,2],[2,2],[2,3],[3,3],[3,4],[4,4]] },
+    { name: "Corridor", cells: [[0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]] }
+];
+
 function generate7x7(difficulty) {
     currentDifficulty = difficulty;
     const size = 7;
@@ -17,6 +25,12 @@ function generate7x7(difficulty) {
     }
 
     if (difficulty === 'hard') {
+        // Voeg optioneel een complex patroon toe als zaadje
+        if (Math.random() > 0.5) {
+            const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+            shape.cells.forEach(([r, c]) => { regions[r][c] = 'A'; });
+        }
+
         for(let i=0; i<3; i++) { 
             let r1 = Math.floor(Math.random()*size);
             let targetChar = regions[r1].find(x => x);
@@ -29,7 +43,7 @@ function generate7x7(difficulty) {
     let unassigned = [];
     for (let r=0; r<size; r++) for (let c=0; c<size; c++) if (!regions[r][c]) unassigned.push({r, c});
     
-    // De cruciale verandering: 0.1 bias dwingt kleine anker-vakjes af
+    // De cruciale bias-instellingen (0.1 voor easy)
     const bias = difficulty === 'easy' ? 0.1 : (difficulty === 'medium' ? 0.5 : 0.85);
 
     while (unassigned.length > 0) {
