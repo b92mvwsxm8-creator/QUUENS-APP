@@ -1,14 +1,6 @@
 let currentPuzzle = null;
 let queens = new Set();
 let marks = new Set();
-let timerInterval;
-let startTime;
-
-// De 14 Expert Patronen (correcte dataset)
-const EXPERT_SHAPES = [
-    { name: "Blossom", regions: [0,0,1,1,1,2,2,3,3,3, 0,0,1,1,1,2,2,3,3,3, 0,0,4,4,4,5,5,3,3,3, 6,6,4,4,4,5,5,7,7,7, 6,6,4,4,4,5,5,7,7,7, 6,6,8,8,8,9,9,7,7,7, 10,10,8,8,8,9,9,11,11,11, 10,10,12,12,12,13,13,11,11,11, 10,10,12,12,12,13,13,11,11,11, 10,10,12,12,12,13,13,11,11,11] },
-    // Voeg hier de rest van de 14 shapes toe...
-];
 
 function initGame() {
     const size = parseInt(document.getElementById('gridSize').value);
@@ -16,28 +8,35 @@ function initGame() {
     
     queens.clear();
     marks.clear();
-    if (timerInterval) clearInterval(timerInterval);
 
     if (difficulty === 'expert' && size === 10) {
-        const shape = EXPERT_SHAPES[Math.floor(Math.random() * EXPERT_SHAPES.length)];
-        currentPuzzle = { size: 10, regions: convertTo2D(shape.regions) };
+        // Kies een willekeurige shape uit de SHAPES lijst in puzzles.js
+        const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        currentPuzzle = { size: 10, regions: generateExpertGrid(shape) };
     } else {
-        // Gebruik hier de ECHTE generator uit je puzzles.js
-        currentPuzzle = generatePuzzle(size, difficulty); 
+        // Zoek de juiste puzzel in de PUZZLES lijst
+        const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
+        currentPuzzle = { size: pData.size, regions: pData.regions };
     }
     
     render();
-    startTimer();
 }
 
-function convertTo2D(arr) {
-    let res = [];
-    for(let i=0; i<10; i++) res.push(arr.slice(i*10, (i+1)*10));
-    return res;
+function generateExpertGrid(shape) {
+    // Maak een leeg 10x10 grid (vlak 0)
+    let grid = Array(10).fill().map(() => Array(10).fill("A"));
+    
+    // Kleur de specifieke cellen van de shape (vlak 1)
+    shape.cells.forEach(([r, c]) => {
+        if (r < 10 && c < 10) grid[r][c] = "B";
+    });
+    
+    return grid;
 }
 
 function render() {
     const board = document.getElementById('board');
+    if (!board) return;
     board.style.gridTemplateColumns = `repeat(${currentPuzzle.size}, 1fr)`;
     board.innerHTML = "";
 
@@ -45,52 +44,31 @@ function render() {
         for (let c = 0; c < currentPuzzle.size; c++) {
             const cell = document.createElement("div");
             cell.className = "cell";
-            cell.dataset.row = r;
-            cell.dataset.col = c;
-            cell.style.backgroundColor = getColorForRegion(currentPuzzle.regions[r][c]);
-            cell.onclick = () => handleMove(r, c);
+            // Kleur bepalen op basis van de letter (A of B)
+            cell.style.backgroundColor = currentPuzzle.regions[r][c] === "B" ? "#FFD1DC" : "#B2E2F2";
+            
+            cell.onclick = () => {
+                const key = `${r},${c}`;
+                if (queens.has(key)) { queens.delete(key); marks.add(key); }
+                else if (marks.has(key)) { marks.delete(key); }
+                else { queens.add(key); }
+                updateUI();
+            };
             board.appendChild(cell);
         }
     }
 }
 
-function handleMove(r, c) {
-    const key = `${r},${c}`;
-    if (queens.has(key)) { queens.delete(key); marks.add(key); }
-    else if (marks.has(key)) { marks.delete(key); }
-    else { queens.add(key); }
-    
-    updateUI();
-    checkWin(); // Deze ontbrak in de vorige versie!
-}
-
 function updateUI() {
     const cells = document.querySelectorAll(".cell");
-    cells.forEach(cell => {
-        const r = parseInt(cell.dataset.row);
-        const c = parseInt(cell.dataset.col);
+    cells.forEach((cell, i) => {
+        const r = Math.floor(i / currentPuzzle.size);
+        const c = i % currentPuzzle.size;
         const key = `${r},${c}`;
-        cell.classList.remove("has-queen", "has-mark", "error");
-        
-        if (queens.has(key)) {
-            cell.classList.add("has-queen");
-            // Hier moet de validatie komen (check of koningin fout staat)
-            if (!isValidPlacement(r, c)) cell.classList.add("error");
-        }
+        cell.classList.remove("has-queen", "has-mark");
+        if (queens.has(key)) cell.classList.add("has-queen");
         if (marks.has(key)) cell.classList.add("has-mark");
     });
-}
-
-// Hulpmiddelen die ik uit je eigen screenshots heb gehaald:
-function getColorForRegion(id) {
-    const colors = ['#FFD1DC', '#B2E2F2', '#C1E1C1', '#FDFD96', '#EBB0D7', '#FFB347', '#B39EB5', '#CFCFC4', '#FF6961', '#77DD77', '#AEC6CF', '#F49AC2', '#CB99C9', '#FDFD96'];
-    return colors[id % colors.length];
-}
-
-function isValidPlacement(r, c) {
-    // Jouw originele validatie logica (rij, kolom en diagonaal check)
-    // ...
-    return true; 
 }
 
 document.addEventListener('DOMContentLoaded', initGame);
