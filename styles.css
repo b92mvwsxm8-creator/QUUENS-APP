@@ -1,3 +1,63 @@
+:root {
+  --bg: #f3f2ef;
+  --grid-line: #000000;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  font-family: -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Fix voor IMG_3225.png: Het bord heeft nu weer duidelijke lijnen en vakken */
+#board {
+  width: 90vw;
+  max-width: 450px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  border: 2px solid var(--grid-line);
+  background-color: var(--grid-line);
+  gap: 1px; /* Dit creëert het zwarte raster tussen de vakken */
+}
+
+.cell {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* De Koningin: Gouden kroon zonder zwarte cirkel */
+.cell.has-queen::after {
+  content: "👑";
+  font-size: clamp(18px, 6vw, 28px);
+  position: absolute;
+}
+
+/* Foutieve koningin: Rood vakje bij conflict */
+.cell.has-queen.bad {
+  background-color: #ffcccc !important;
+}
+
+/* Het Kruisje (✕) */
+.cell.has-mark::after {
+  content: "✕";
+  color: #555;
+  font-size: 20px;
+}
+
+/* Alle kleurregio's voor 7x7 en hoger */
 .cell[data-region="A"] { background-color: #f6cd8b; }
 .cell[data-region="B"] { background-color: #c5b4e3; }
 .cell[data-region="C"] { background-color: #90caf9; }
