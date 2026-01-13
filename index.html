@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Game</title>
+    <title>Queens Expert</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <header>
-        <h1>Queens</h1>
-    </header>
-
+    <header><h1>Queens 7x7</h1></header>
     <div class="controls">
-        <span>Tijd: <span id="timer">00:00</span></span>
-        <button id="resetBtn" onclick="initGame(7)">Reset</button>
+        <select id="difficulty" onchange="initGame(7, this.value)">
+            <option value="easy">Niveau: Simpel</option>
+            <option value="medium">Niveau: Gemiddeld</option>
+            <option value="hard" selected>Niveau: Expert</option>
+        </select>
+        <button onclick="initGame(7, document.getElementById('difficulty').value)">Nieuwe Puzzel</button>
+        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
     </div>
-
     <div id="board"></div>
-
     <div class="instructions">
-        <p>Plaats exact één koningin per rij, kolom en gekleurd gebied. Koninginnen mogen elkaar niet raken, ook niet diagonaal. Gebruik kruisjes om vakjes uit te sluiten.</p>
+        <p id="tip">Expert tip: Kijk naar regio's die elkaar in rijen of kolommen overlappen.</p>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
