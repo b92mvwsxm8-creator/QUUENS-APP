@@ -1,63 +1,9 @@
-:root {
-  --bg: #f3f2ef;
-  --panel: #ffffff;
-  --grid: #000000;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-header {
-  width: 100%;
-  padding: 10px;
-  background: var(--panel);
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-/* Fix: Het bord is nu ALTIJD vierkant */
-#board {
-  width: 90vw;
-  max-width: 400px;
-  aspect-ratio: 1 / 1; /* Houdt de vakjes vierkant */
-  display: grid;
-  background: var(--grid);
-  gap: 2px;
-  border: 2px solid var(--grid);
-  margin: 20px 0;
-}
-
-.cell {
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 24px;
-  position: relative;
-}
-
-/* De Koningin mooi gecentreerd */
-.cell.has-queen::after {
-  content: "👑";
-  position: absolute;
-}
-
-/* De Kruisjes */
-.cell.has-mark::after {
-  content: "✕";
-  color: #333;
-}
-
-/* Regio kleuren */
-.cell[data-region="A"] { background-color: #c5b4e3; }
-.cell[data-region="B"] { background-color: #a5d6a7; }
-.cell[data-region="C"] { background-color: #f6cd8b; }
-.cell[data-region="D"] { background-color: #90caf9; }
+.cell[data-region="A"] { background-color: #f6cd8b; }
+.cell[data-region="B"] { background-color: #c5b4e3; }
+.cell[data-region="C"] { background-color: #90caf9; }
+.cell[data-region="D"] { background-color: #a5d6a7; }
 .cell[data-region="E"] { background-color: #ffab91; }
+.cell[data-region="F"] { background-color: #e0e0e0; }
+.cell[data-region="G"] { background-color: #dce775; }
+.cell[data-region="H"] { background-color: #b3e5fc; }
+.cell[data-region="I"] { background-color: #ffccbc; }
