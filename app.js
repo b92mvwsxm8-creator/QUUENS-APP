@@ -5,20 +5,20 @@ let timerInterval;
 let startTime;
 let currentDifficulty = 'easy';
 
-// 1. De Generator met 3 niveaus
+// De Generator met jouw specifieke instellingen
 function generate7x7(difficulty) {
     currentDifficulty = difficulty;
     const size = 7;
     const regions = Array.from({ length: size }, () => Array(size).fill(null));
     
-    // Plaats koninginnen als basis
+    // 1. Plaats de koninginnen als basis (Oplossing garanderen)
     let cols = Array.from({ length: size }, (_, i) => i);
     shuffle(cols);
     for (let r = 0; r < size; r++) {
         regions[r][cols[r]] = String.fromCharCode(65 + r);
     }
 
-    // Expert Logica: Versmelt regio's voor grote blokken/ringen
+    // 2. Expert Logica: Versmelt regio's voor grote blokken
     if (difficulty === 'hard') {
         for(let i=0; i<3; i++) { 
             let r1 = Math.floor(Math.random()*size), r2 = (r1+1)%size;
@@ -27,7 +27,7 @@ function generate7x7(difficulty) {
         }
     }
 
-    // Groei-logica met de bias die je stuurde
+    // 3. Groei-logica met de biases: 0.2 (Easy), 0.5 (Medium), 0.8 (Hard)
     let unassigned = [];
     for (let r=0; r<size; r++) for (let c=0; c<size; c++) if (!regions[r][c]) unassigned.push({r, c});
     const bias = difficulty === 'easy' ? 0.2 : (difficulty === 'medium' ? 0.5 : 0.8);
@@ -45,7 +45,8 @@ function generate7x7(difficulty) {
             }
         }
     }
-    // Gaatjes vullen
+
+    // Gaatjes vullen voor de zekerheid
     unassigned.forEach(p => {
         const n = [[p.r-1,p.c], [p.r+1,p.c], [p.r,p.c-1], [p.r,p.c+1]].find(([y, x]) => 
             y >= 0 && y < size && x >= 0 && x < size && regions[y][x]);
@@ -55,7 +56,7 @@ function generate7x7(difficulty) {
     return { size, regions };
 }
 
-// 2. Win-Check & Highscore Logica
+// Win-Check & Score opslaan
 function handleWin() {
     clearInterval(timerInterval);
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
@@ -89,14 +90,14 @@ function updateUI() {
         } else if (marks.has(k)) cell.classList.add("has-mark");
     });
 
-    // De Win-check
+    // Win check bij 7 koninginnen zonder fouten
     if (queens.size === 7 && !hasError) {
         handleWin();
     }
 }
 
-// 3. Ondersteunende functies
-function initGame(size, difficulty = 'easy') {
+// Hulpfuncties
+function initGame(size, difficulty = 'hard') {
     currentPuzzle = generate7x7(difficulty);
     queens.clear(); marks.clear();
     displayBestTime();
@@ -149,4 +150,4 @@ function render() {
 
 function shuffle(a) { for (let i=a.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } }
 
-document.addEventListener("DOMContentLoaded", () => initGame(7, 'easy'));
+document.addEventListener("DOMContentLoaded", () => initGame(7, 'hard'));
