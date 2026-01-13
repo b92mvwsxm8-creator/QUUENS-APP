@@ -8,17 +8,16 @@
 </head>
 <body>
     <header style="text-align: center; margin-top: 10px;">
-        <h1 style="margin: 0;">Queens Expert</h1>
-        <div style="font-weight: bold; color: #d32f2f; margin-top: 5px;">
-            <span id="puzzle-name">Laden...</span>
-        </div>
+        <h1>Queens Expert</h1>
     </header>
 
     <div class="controls">
         <select id="gridSize" onchange="initGame()">
             <option value="7">7x7</option>
             <option value="8">8x8</option>
+            <option value="9">9x9</option>
             <option value="10" selected>10x10</option>
+            <option value="11">11x11</option>
         </select>
         <button onclick="initGame()">Nieuwe Puzzel</button>
         <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
