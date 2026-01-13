@@ -22,16 +22,17 @@ header {
   text-align: center;
 }
 
-h1 { margin: 10px 0; font-size: 28px; font-weight: 700; }
+h1 { margin: 10px 0; font-size: 24px; font-weight: 700; }
 
-/* Controls styling gebaseerd op IMG_3242.png */
+/* Dashboard styling */
 .controls {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
+  max-width: 450px;
 }
 
 select, button {
@@ -41,23 +42,26 @@ select, button {
   background: white;
   font-size: 14px;
   cursor: pointer;
+  font-weight: 500;
 }
 
-button {
-  background-color: #eee;
-  font-weight: 600;
-}
-
-.timer-box {
-  font-family: monospace;
-  font-size: 18px;
+.timer-box, .highscore-box {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
   font-weight: bold;
   background: #eee;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
+  min-width: 90px;
+  text-align: center;
 }
 
-/* Het Bord: Strakke zwarte lijnen zoals LinkedIn Queens */
+.highscore-box {
+  background: #e3f2fd; /* Lichtblauw voor PR focus */
+  color: #1565c0;
+}
+
+/* Het Bord */
 #board {
   width: 92vw;
   max-width: 450px;
@@ -77,11 +81,10 @@ button {
   cursor: pointer;
 }
 
-/* Koningin & Markeringen */
+/* Koningin & Markering */
 .cell.has-queen::after {
   content: "👑";
   font-size: clamp(20px, 7vw, 32px);
-  z-index: 2;
 }
 
 .cell.has-mark::after {
@@ -90,5 +93,25 @@ button {
   font-size: 24px;
 }
 
-/* Conflict Kleur (Rood) */
-.cell.has-queen
+.cell.has-queen.bad {
+  background-color: #ffb3b3 !important; /* Rode foutmelding */
+}
+
+/* Expert Kleurenpalet */
+.cell[data-region="A"] { background-color: #fce4ec; }
+.cell[data-region="B"] { background-color: #e8f5e9; }
+.cell[data-region="C"] { background-color: #e3f2fd; }
+.cell[data-region="D"] { background-color: #fff3e0; }
+.cell[data-region="E"] { background-color: #f3e5f5; }
+.cell[data-region="F"] { background-color: #fffde7; }
+.cell[data-region="G"] { background-color: #efebe9; }
+
+.instructions {
+  margin-top: 15px;
+  padding: 0 20px;
+  max-width: 400px;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  line-height: 1.4;
+}
