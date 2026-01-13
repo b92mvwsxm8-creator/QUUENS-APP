@@ -3,39 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Game</title>
+    <title>Queens Expert</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1>Queens</h1>
-            <div class="controls">
-                <select id="gridSize" onchange="initGame()">
-                    <option value="7">7x7</option>
-                    <option value="8">8x8</option>
-                    <option value="9">9x9</option>
-                    <option value="10" selected>10x10</option>
-                </select>
-                <select id="difficulty" onchange="initGame()">
-                    <option value="easy">Makkelijk</option>
-                    <option value="medium">Gemiddeld</option>
-                    <option value="hard">Moeilijk</option>
-                    <option value="expert" selected>Expert</option>
-                </select>
-            </div>
-            <div class="stats">
-                <span>Tijd: <span id="timer">00:00</span></span>
-            </div>
-        </div>
-
-        <div id="board" class="grid"></div>
-
-        <div class="footer-actions">
-            <button onclick="initGame()" class="btn">Nieuw Spel</button>
-        </div>
+    <header><h1>Queens 7x7</h1></header>
+    <div class="controls">
+        <select id="difficulty" onchange="initGame(7, this.value)">
+            <option value="easy">Niveau: Simpel</option>
+            <option value="medium">Niveau: Gemiddeld</option>
+            <option value="hard" selected>Niveau: Expert</option>
+        </select>
+        <button onclick="initGame(7, document.getElementById('difficulty').value)">Nieuwe Puzzel</button>
+        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
+        <div class="highscore-box">PR: <span id="best-time">--:--</span></div>
     </div>
-    <script src="puzzles.js"></script>
+    <div id="board-container"><div id="board"></div></div>
     <script src="app.js"></script>
 </body>
 </html>
