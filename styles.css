@@ -1,131 +1,59 @@
-:root {
-    --black: #000000;
-    --white: #ffffff;
-    --err-red: #d32f2f;
-    --bg-color: #fdfdfd;
-}
-
 body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--bg-color);
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    background-color: #f3f2ef;
+    margin: 0;
+    padding: 20px;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#game-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 500px;
 }
 
-h1 {
-    font-size: 24px;
-    margin: 15px 0 10px 0;
-    color: var(--black);
-}
-
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    padding: 0 10px;
-}
-
-.control-group {
-    display: flex;
-    flex-direction: column;
-    font-size: 12px;
-}
-
-select, .btn {
-    padding: 10px;
-    font-size: 16px; /* Groter voor mobiel (voorkomt inzoomen) */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: white;
-}
-
-.btn {
-    background-color: #2c3e50;
-    color: white;
-    font-weight: bold;
-    margin-top: 15px;
-    width: 200px;
-    cursor: pointer;
-}
-
-.stats {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 10px;
-}
-
-.stat-box {
-    font-family: monospace;
-    font-size: 16px;
-    font-weight: bold;
-    background: #eee;
-    padding: 8px 15px;
-    border-radius: 6px;
-}
-
-/* De bord container */
-.board {
+#board {
     display: grid;
-    width: 92vw;
-    max-width: 440px;
-    aspect-ratio: 1 / 1;
-    background-color: var(--black);
-    border: 3px solid var(--black);
-    gap: 1px; /* Dunnere lijnen voor strakker uiterlijk */
+    gap: 2px;
+    width: 100%;
+    margin-top: 20px;
+    background-color: #8c8c8c;
+    border: 2px solid #8c8c8c;
 }
 
 .cell {
+    aspect-ratio: 1 / 1;
     background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
     cursor: pointer;
-    position: relative;
     user-select: none;
+    transition: background-color 0.1s;
 }
 
-/* De Koningin en het Kruisje */
-.cell.has-queen::after {
-    content: '♛';
-    font-size: 1.5em;
-    color: var(--black);
+.cell:hover {
+    filter: brightness(0.95);
 }
 
-.cell.has-mark::after {
-    content: '✕';
-    color: #444;
-    font-size: 1.2em;
+.has-queen {
+    color: #000;
 }
 
-.cell.bad {
-    background: #ffcdd2 !important; /* Versimpeld voor betere zichtbaarheid op kleine schermen */
+.has-mark {
+    color: #666;
 }
 
-.cell.bad.has-queen::after {
-    color: var(--err-red);
+#timer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #000000e6;
 }
-
-/* Regio Kleuren */
-.cell[data-region="A"] { background-color: #faff8c; }
-.cell[data-region="B"] { background-color: #b399e6; }
-.cell[data-region="C"] { background-color: #f28b50; }
-.cell[data-region="D"] { background-color: #8cbcf2; }
-.cell[data-region="E"] { background-color: #a3e6a3; }
-.cell[data-region="F"] { background-color: #fce4ec; }
-.cell[data-region="G"] { background-color: #e0e0e0; }
-.cell[data-region="H"] { background-color: #ffd54f; }
-.cell[data-region="I"] { background-color: #4db6ac; }
-.cell[data-region="J"] { background-color: #dce775; }
