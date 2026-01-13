@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Expert</title>
+    <title>Queens Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header><h1>Queens 7x7</h1></header>
+    <header>
+        <h1>Queens 7x7</h1>
+    </header>
+
     <div class="controls">
         <select id="difficulty" onchange="initGame(7, this.value)">
             <option value="easy">Niveau: Simpel</option>
@@ -16,11 +19,15 @@
         </select>
         <button onclick="initGame(7, document.getElementById('difficulty').value)">Nieuwe Puzzel</button>
         <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
+        <div class="highscore-box">PR: <span id="best-time">--:--</span></div>
     </div>
+
     <div id="board"></div>
+
     <div class="instructions">
-        <p id="tip">Expert tip: Kijk naar regio's die elkaar in rijen of kolommen overlappen.</p>
+        <p>Plaats in elke rij, kolom en kleur precies één koningin. Koninginnen mogen elkaar ook diagonaal niet raken.</p>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
