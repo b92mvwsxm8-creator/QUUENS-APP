@@ -3,7 +3,6 @@ let queens = new Set();
 let marks = new Set();
 let timerInterval;
 let startTime;
-
 function initGame() {
     const size = 10;
     const difficulty = 'expert';
@@ -17,7 +16,6 @@ function initGame() {
     render();
     startTimer();
 }
-
 function render() {
     const board = document.getElementById('board');
     if (!board || !currentPuzzle) return;
@@ -34,7 +32,6 @@ function render() {
         }
     }
 }
-
 function handleMove(r, c) {
     const key = `${r},${c}`;
     if (queens.has(key)) {
@@ -47,7 +44,6 @@ function handleMove(r, c) {
     }
     updateUI();
 }
-
 function updateUI() {
     const cells = document.querySelectorAll(".cell");
     cells.forEach((cell, i) => {
@@ -62,7 +58,6 @@ function updateUI() {
         }
     });
 }
-
 function startTimer() {
     startTime = Date.now();
     timerInterval = setInterval(() => {
@@ -71,11 +66,9 @@ function startTimer() {
         if (timerEl) timerEl.textContent = formatTime(diff);
     }, 1000);
 }
-
 function formatTime(s) {
     const mins = Math.floor(s / 60).toString().padStart(2, '0');
     const secs = (s % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
 }
-
 document.addEventListener('DOMContentLoaded', initGame);
