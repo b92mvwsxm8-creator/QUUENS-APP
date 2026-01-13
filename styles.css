@@ -1,14 +1,13 @@
 :root {
-  --bg: #f8f9fa;
+  --bg: #fdfdfd;
   --grid-line: #333333;
-  --panel: #ffffff;
   --text: #202124;
 }
 
 body {
   margin: 0;
   background-color: var(--bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,22 +15,14 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-header {
-  width: 100%;
-  padding: 10px 0;
-  text-align: center;
-}
+header h1 { margin: 15px 0; font-size: 24px; }
 
-h1 { margin: 10px 0; font-size: 24px; font-weight: 700; }
-
-/* Dashboard styling */
 .controls {
   margin-bottom: 15px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
-  align-items: center;
   max-width: 450px;
 }
 
@@ -41,35 +32,29 @@ select, button {
   border: 1px solid #ccc;
   background: white;
   font-size: 14px;
-  cursor: pointer;
   font-weight: 500;
 }
 
 .timer-box, .highscore-box {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
-  font-weight: bold;
-  background: #eee;
+  font-family: monospace;
+  font-size: 15px;
   padding: 6px 10px;
   border-radius: 6px;
-  min-width: 90px;
+  background: #eeeeee;
+  min-width: 80px;
   text-align: center;
 }
 
-.highscore-box {
-  background: #e3f2fd; /* Lichtblauw voor PR focus */
-  color: #1565c0;
-}
+.highscore-box { background: #e3f2fd; color: #1565c0; }
 
-/* Het Bord */
 #board {
-  width: 92vw;
-  max-width: 450px;
+  width: 94vw;
+  max-width: 420px;
   aspect-ratio: 1 / 1;
   display: grid;
-  border: 2px solid var(--grid-line);
+  border: 2.5px solid var(--grid-line);
   background-color: var(--grid-line);
-  gap: 1px;
+  gap: 1.5px;
 }
 
 .cell {
@@ -77,41 +62,20 @@ select, button {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   cursor: pointer;
 }
 
-/* Koningin & Markering */
-.cell.has-queen::after {
-  content: "👑";
-  font-size: clamp(20px, 7vw, 32px);
-}
+.cell.has-queen::after { content: "👑"; font-size: 26px; }
+.cell.has-mark::after { content: "✕"; color: #777; font-size: 20px; }
+.cell.bad { background-color: #ffaaaa !important; }
 
-.cell.has-mark::after {
-  content: "✕";
-  color: #666;
-  font-size: 24px;
-}
+/* Kleuren palet met onderscheid */
+.cell[data-region="A"] { background-color: #ffcdd2; } /* Roze */
+.cell[data-region="B"] { background-color: #c8e6c9; } /* Groen */
+.cell[data-region="C"] { background-color: #bbdefb; } /* Blauw */
+.cell[data-region="D"] { background-color: #fff9c4; } /* Geel */
+.cell[data-region="E"] { background-color: #d1c4e9; } /* Paars */
+.cell[data-region="F"] { background-color: #ffcc80; } /* Oranje */
+.cell[data-region="G"] { background-color: #d7ccc8; } /* Bruin */
 
-.cell.has-queen.bad {
-  background-color: #ffb3b3 !important; /* Rode foutmelding */
-}
-
-/* Expert Kleurenpalet */
-.cell[data-region="A"] { background-color: #fce4ec; }
-.cell[data-region="B"] { background-color: #e8f5e9; }
-.cell[data-region="C"] { background-color: #e3f2fd; }
-.cell[data-region="D"] { background-color: #fff3e0; }
-.cell[data-region="E"] { background-color: #f3e5f5; }
-.cell[data-region="F"] { background-color: #fffde7; }
-.cell[data-region="G"] { background-color: #efebe9; }
-
-.instructions {
-  margin-top: 15px;
-  padding: 0 20px;
-  max-width: 400px;
-  font-size: 13px;
-  color: #666;
-  text-align: center;
-  line-height: 1.4;
-}
+.instructions { padding: 15px; font-size: 13px; text-align: center; color: #666; }
