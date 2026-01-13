@@ -1,95 +1,54 @@
-let currentPuzzle = null;
-let queens = new Set();
-let marks = new Set();
-let timerInterval;
-let startTime;
-
-// 1. De volledige logica voor het initialiseren van het spel
-function initGame() {
-    const sizeSelect = document.getElementById('gridSize');
-    const diffSelect = document.getElementById('difficulty');
-    const size = sizeSelect ? parseInt(sizeSelect.value) : 10;
-    const difficulty = diffSelect ? diffSelect.value : 'expert';
-    
-    queens.clear();
-    marks.clear();
-    clearInterval(timerInterval);
-
-    // Expert modus gebruikt de SHAPES uit puzzles.js
-    if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
-        const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        currentPuzzle = { size: 10, regions: shape.regions };
-    } else if (typeof PUZZLES !== 'undefined') {
-        const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
-        currentPuzzle = { size: pData.size, regions: pData.regions };
+// Data voor standaard niveaus
+const PUZZLES = [
+    {
+        size: 7,
+        regions: [
+            [0,0,0,1,1,1,1],
+            [0,0,0,1,1,1,1],
+            [2,2,2,2,3,3,3],
+            [2,2,2,2,3,3,3],
+            [4,4,5,5,5,6,6],
+            [4,4,5,5,5,6,6],
+            [4,4,5,5,5,6,6]
+        ]
+    },
+    {
+        size: 8,
+        regions: [
+            [0,0,1,1,2,2,3,3],
+            [0,0,1,1,2,2,3,3],
+            [4,4,4,4,5,5,5,5],
+            [4,4,4,4,5,5,5,5],
+            [6,6,6,6,7,7,7,7],
+            [6,6,6,6,7,7,7,7],
+            [0,0,1,1,2,2,3,3],
+            [0,0,1,1,2,2,3,3]
+        ]
+    },
+    {
+        size: 9,
+        regions: [
+            [0,0,0,1,1,1,2,2,2],
+            [0,0,0,1,1,1,2,2,2],
+            [3,3,3,4,4,4,5,5,5],
+            [3,3,3,4,4,4,5,5,5],
+            [6,6,6,7,7,7,8,8,8],
+            [6,6,6,7,7,7,8,8,8],
+            [0,0,0,1,1,1,2,2,2],
+            [3,3,3,4,4,4,5,5,5],
+            [6,6,6,7,7,7,8,8,8]
+        ]
     }
-    
-    render();
-    startTimer();
-}
+];
 
-// 2. De render functie die de kleuren en cellen tekent
-function render() {
-    const board = document.getElementById('board');
-    if (!board || !currentPuzzle) return;
-    
-    board.style.gridTemplateColumns = `repeat(${currentPuzzle.size}, 1fr)`;
-    board.innerHTML = "";
-
-    for (let r = 0; r < currentPuzzle.size; r++) {
-        for (let c = 0; c < currentPuzzle.size; c++) {
-            const cell = document.createElement("div");
-            cell.className = "cell";
-            // Gebruik de regio-ID voor een unieke kleur
-            const regionId = currentPuzzle.regions[r][c];
-            cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 85%)`;
-            
-            cell.onclick = () => handleMove(r, c);
-            board.appendChild(cell);
-        }
-    }
-}
-
-// 3. Spelregels en interactie
-function handleMove(r, c) {
-    const key = `${r},${c}`;
-    if (queens.has(key)) {
-        queens.delete(key);
-        marks.add(key);
-    } else if (marks.has(key)) {
-        marks.delete(key);
-    } else {
-        queens.add(key);
-    }
-    updateUI();
-    checkWin();
-}
-
-function updateUI() {
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell, i) => {
-        const r = Math.floor(i / currentPuzzle.size);
-        const c = i % currentPuzzle.size;
-        const key = `${r},${c}`;
-        cell.classList.remove("has-queen", "has-mark", "conflict");
-        if (queens.has(key)) cell.classList.add("has-queen");
-        if (marks.has(key)) cell.classList.add("has-mark");
-    });
-}
-
-// 4. Timer functies
-function startTimer() {
-    startTime = Date.now();
-    timerInterval = setInterval(() => {
-        const diff = Math.floor((Date.now() - startTime) / 1000);
-        const timerEl = document.getElementById('timer');
-        if (timerEl) timerEl.textContent = formatTime(diff);
-    }, 1000);
-}
-
-function formatTime(s) {
-    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
-}
-
-// Start het spel zodra de pagina geladen is
-document.addEventListener('DOMContentLoaded', initGame);
+// De 14 Expert Patronen (10x10)
+const SHAPES = [
+    { name: "Blossom", regions: [0,0,1,1,1,2,2,3,3,3,0,0,1,1,1,2,2,3,3,3,0,0,4,4,4,5,5,3,3,3,6,6,4,4,4,5,5,7,7,7,6,6,4,4,4,5,5,7,7,7,6,6,8,8,8,9,9,7,7,7,10,10,8,8,8,9,9,11,11,11,10,10,12,12,12,13,13,11,11,11,10,10,12,12,12,13,13,11,11,11,10,10,12,12,12,13,13,11,11,11] },
+    { name: "Diamond", regions: [0,0,0,0,1,1,2,2,2,2,0,0,0,1,1,1,1,2,2,2,0,0,1,1,1,1,1,1,2,2,0,3,3,3,3,3,3,3,3,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,6,6,6,6,6,6,6,6,7,5,5,6,6,6,6,6,6,7,7,5,5,5,8,8,8,8,7,7,7,5,5,5,5,9,9,7,7,7,7] },
+    { name: "Snake", regions: [0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,2,0,0,0,3,3,3,3,3,3,2,2,0,0,0,3,3,3,3,3,4,2,2,0,0,0,5,5,5,5,4,4,2,2,0,0,0,5,5,5,6,4,4,2,2,0,0,0,7,7,6,6,4,4,2,2,0,0,0,7,8,6,6,4,4,2,2,0,0,0,8,8,8,6,6,4,4,2,2,0,0] },
+    { name: "Corridor", regions: [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,3,3,3,3,3,3,2,2,2,2,3,4,4,4,4,3,2,2,2,2,3,4,5,5,4,3,2,2,2,2,3,4,5,5,4,3,2,2,2,2,3,4,4,4,4,3,2,2,2,2,3,3,3,3,3,3,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7] },
+    { name: "Plan 9", regions: [0,0,0,1,1,1,1,2,2,2,0,0,0,1,1,1,1,2,2,2,0,0,0,3,3,3,3,2,2,2,4,4,4,3,3,3,3,5,5,5,4,4,4,6,6,6,6,5,5,5,4,4,4,6,6,6,6,5,5,5,7,7,7,6,6,6,6,8,8,8,9,9,9,10,10,10,10,8,8,8,9,9,9,10,10,10,10,8,8,8,9,9,9,10,10,10,10,8,8,8] },
+    { name: "Happy 2026", regions: [0,1,1,1,1,1,1,1,1,0,2,0,3,3,3,3,3,3,0,4,2,2,0,5,5,5,5,0,4,4,2,2,2,0,6,6,0,4,4,4,2,2,2,2,0,0,4,4,4,4,7,7,7,7,0,0,9,9,9,9,7,7,7,0,8,8,0,9,9,9,7,7,0,8,8,8,8,0,9,9,7,0,8,8,8,8,8,8,0,9,0,10,10,10,10,10,10,10,10,0] },
+    { name: "Cross", regions: [0,0,0,0,1,1,2,2,2,2,0,0,0,0,1,1,2,2,2,2,3,3,3,3,1,1,4,4,4,4,3,3,3,3,1,1,4,4,4,4,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,8,8,9,9,9,9,7,7,7,7,8,8,9,9,9,9,10,10,10,10,8,8,11,11,11,11,10,10,10,10,8,8,11,11,11,11] },
+    { name: "Spiral", regions: [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,2,2,2,2,2,2,2,1,0,1,2,3,3,3,3,3,2,1,0,1,2,3,4,4,4,3,2,1,0,1,2,3,4,5,4,3,2,1,0,1,2,3,4,4,4,3,2,1,0,1,2,3,3,3,3,3,2,1,0,1,2,2,2,2,2,2,2,1,0,1,1,1,1,1,1,1,1,1,0] },
+    { name: "ZigZag", regions:
