@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Game</title>
+    <title>Queens LinkedIn Expert</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <header>
         <h1>Queens 7x7</h1>
     </header>
@@ -18,14 +19,25 @@
             <option value="hard" selected>Niveau: Expert</option>
         </select>
         <button onclick="initGame(7, document.getElementById('difficulty').value)">Nieuwe Puzzel</button>
-        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
-        <div class="highscore-box">PR: <span id="best-time">--:--</span></div>
+        
+        <div class="timer-box">
+            Tijd: <span id="timer">00:00</span>
+        </div>
+        
+        <div class="highscore-box">
+            PR: <span id="best-time">--:--</span>
+        </div>
     </div>
 
-    <div id="board"></div>
+    <div id="board-container">
+        <div id="board"></div>
+    </div>
 
     <div class="instructions">
-        <p>Eén kroon per rij, kolom en kleur. Kronen mogen elkaar diagonaal niet raken.</p>
+        <h3>Hoe speel je Queens?</h3>
+        <p>1. Plaats exact één kroon in elke rij, kolom en kleurvlak.</p>
+        <p>2. Kronen mogen elkaar niet raken, ook niet diagonaal.</p>
+        <p>3. Gebruik het kruisje (✕) om vakjes uit te sluiten.</p>
     </div>
 
     <script src="app.js"></script>
