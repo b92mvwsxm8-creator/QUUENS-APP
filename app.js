@@ -3,17 +3,11 @@ let currentPuzzle, queens = new Set(), marks = new Set(), timerInterval, startTi
 function initGame() {
     const size = parseInt(document.getElementById('gridSize').value);
     queens.clear(); marks.clear();
-
-    if (typeof SHAPES !== 'undefined') {
-        const available = SHAPES.filter(s => s.regions.length === size);
-        if (available.length > 0) {
-            const p = available[Math.floor(Math.random() * available.length)];
-            currentPuzzle = { size: size, regions: p.regions };
-            document.getElementById('puzzle-name').textContent = p.name;
-        } else {
-            document.getElementById('puzzle-name').textContent = "Geen puzzel voor deze maat";
-            currentPuzzle = { size: size, regions: Array.from({length:size}, (v, r) => Array(size).fill(String.fromCharCode(65+r))) };
-        }
+    const available = SHAPES.filter(s => s.size === size);
+    if (available.length > 0) {
+        currentPuzzle = available[Math.floor(Math.random() * available.length)];
+    } else {
+        currentPuzzle = { size: size, regions: Array.from({length:size}, (v, r) => Array(size).fill(r)) };
     }
     render();
     startTimer();
