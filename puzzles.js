@@ -15,7 +15,3 @@ const SHAPES = [
         ]
     }
 ];
-
-const PUZZLES = [
-    { size: 10, regions: SHAPES[0].regions }
-];
