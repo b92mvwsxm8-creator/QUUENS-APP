@@ -14,6 +14,7 @@ function initGame() {
     marks.clear();
     if (timerInterval) clearInterval(timerInterval);
 
+    // Hier laden we de LinkedIn-stijl shapes uit je puzzles.js
     if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
         const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         currentPuzzle = { size: 10, regions: shape.regions };
@@ -37,8 +38,8 @@ function render() {
         for (let c = 0; c < currentPuzzle.size; c++) {
             const cell = document.createElement("div");
             cell.className = "cell";
+            // Kleur de LinkedIn-vlakken op basis van de regio-ID uit puzzles.js
             const regionId = currentPuzzle.regions[r][c];
-            // LinkedIn shapes: kleur op basis van regio
             cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 80%)`;
             
             cell.onclick = () => handleMove(r, c);
@@ -68,11 +69,11 @@ function updateUI() {
         const key = `${r},${c}`;
         
         cell.classList.remove("has-queen", "has-mark");
-        cell.textContent = ""; 
+        cell.textContent = ""; // Zorgt dat de cel leeg is (geen gouden kroon)
         
         if (queens.has(key)) {
             cell.classList.add("has-queen");
-            cell.textContent = "Q"; // Geen gouden kroon, gewoon tekst
+            cell.textContent = "Q"; // Gewoon een tekst "Q" in plaats van een kroon
         } else if (marks.has(key)) {
             cell.classList.add("has-mark");
             cell.textContent = "X"; 
@@ -90,7 +91,10 @@ function startTimer() {
 }
 
 function formatTime(s) {
-    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    const mins = Math.floor(s / 60).toString().padStart(2, '0');
+    const secs = (s % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
 }
 
+// Start het spel zodra de pagina geladen is
 document.addEventListener('DOMContentLoaded', initGame);
