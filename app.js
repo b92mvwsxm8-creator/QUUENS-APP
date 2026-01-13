@@ -1,42 +1,38 @@
 let currentPuzzle = null;
 let queens = new Set();
 let marks = new Set();
+let timerInterval;
+let startTime;
 
+// 1. De volledige logica voor het initialiseren van het spel
 function initGame() {
-    const size = parseInt(document.getElementById('gridSize').value);
-    const difficulty = document.getElementById('difficulty').value;
+    const sizeSelect = document.getElementById('gridSize');
+    const diffSelect = document.getElementById('difficulty');
+    const size = sizeSelect ? parseInt(sizeSelect.value) : 10;
+    const difficulty = diffSelect ? diffSelect.value : 'expert';
     
     queens.clear();
     marks.clear();
+    clearInterval(timerInterval);
 
-    if (difficulty === 'expert' && size === 10) {
-        // Kies een willekeurige shape uit de SHAPES lijst in puzzles.js
+    // Expert modus gebruikt de SHAPES uit puzzles.js
+    if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
         const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        currentPuzzle = { size: 10, regions: generateExpertGrid(shape) };
-    } else {
-        // Zoek de juiste puzzel in de PUZZLES lijst
+        currentPuzzle = { size: 10, regions: shape.regions };
+    } else if (typeof PUZZLES !== 'undefined') {
         const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
         currentPuzzle = { size: pData.size, regions: pData.regions };
     }
     
     render();
+    startTimer();
 }
 
-function generateExpertGrid(shape) {
-    // Maak een leeg 10x10 grid (vlak 0)
-    let grid = Array(10).fill().map(() => Array(10).fill("A"));
-    
-    // Kleur de specifieke cellen van de shape (vlak 1)
-    shape.cells.forEach(([r, c]) => {
-        if (r < 10 && c < 10) grid[r][c] = "B";
-    });
-    
-    return grid;
-}
-
+// 2. De render functie die de kleuren en cellen tekent
 function render() {
     const board = document.getElementById('board');
-    if (!board) return;
+    if (!board || !currentPuzzle) return;
+    
     board.style.gridTemplateColumns = `repeat(${currentPuzzle.size}, 1fr)`;
     board.innerHTML = "";
 
@@ -44,19 +40,29 @@ function render() {
         for (let c = 0; c < currentPuzzle.size; c++) {
             const cell = document.createElement("div");
             cell.className = "cell";
-            // Kleur bepalen op basis van de letter (A of B)
-            cell.style.backgroundColor = currentPuzzle.regions[r][c] === "B" ? "#FFD1DC" : "#B2E2F2";
+            // Gebruik de regio-ID voor een unieke kleur
+            const regionId = currentPuzzle.regions[r][c];
+            cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 85%)`;
             
-            cell.onclick = () => {
-                const key = `${r},${c}`;
-                if (queens.has(key)) { queens.delete(key); marks.add(key); }
-                else if (marks.has(key)) { marks.delete(key); }
-                else { queens.add(key); }
-                updateUI();
-            };
+            cell.onclick = () => handleMove(r, c);
             board.appendChild(cell);
         }
     }
+}
+
+// 3. Spelregels en interactie
+function handleMove(r, c) {
+    const key = `${r},${c}`;
+    if (queens.has(key)) {
+        queens.delete(key);
+        marks.add(key);
+    } else if (marks.has(key)) {
+        marks.delete(key);
+    } else {
+        queens.add(key);
+    }
+    updateUI();
+    checkWin();
 }
 
 function updateUI() {
@@ -65,10 +71,25 @@ function updateUI() {
         const r = Math.floor(i / currentPuzzle.size);
         const c = i % currentPuzzle.size;
         const key = `${r},${c}`;
-        cell.classList.remove("has-queen", "has-mark");
+        cell.classList.remove("has-queen", "has-mark", "conflict");
         if (queens.has(key)) cell.classList.add("has-queen");
         if (marks.has(key)) cell.classList.add("has-mark");
     });
 }
 
+// 4. Timer functies
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+        const diff = Math.floor((Date.now() - startTime) / 1000);
+        const timerEl = document.getElementById('timer');
+        if (timerEl) timerEl.textContent = formatTime(diff);
+    }, 1000);
+}
+
+function formatTime(s) {
+    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// Start het spel zodra de pagina geladen is
 document.addEventListener('DOMContentLoaded', initGame);
