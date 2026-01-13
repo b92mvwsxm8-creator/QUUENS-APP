@@ -3,35 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Queens</title>
-
+  <title>Queens - LinkedIn Style</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
   <h1>Queens</h1>
-
   <div class="row">
-    <label for="puzzleSelect">Puzzel</label>
+    <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
     <select id="puzzleSelect"></select>
-
     <button id="resetBtn" type="button">Reset</button>
   </div>
-
   <p id="status"></p>
 </header>
 
 <main>
   <div id="board" class="board"></div>
-
   <section class="rules">
-    <p>
-      Plaats exact één koningin per rij, kolom en gekleurd gebied.
-      Koninginnen mogen elkaar niet raken, ook niet diagonaal.
-      Gebruik kruisjes om vakjes uit te sluiten.
-    </p>
+    <p>Plaats exact één koningin per rij, kolom en gekleurd gebied. Koninginnen mogen elkaar niet raken, ook niet diagonaal. Gebruik kruisjes om vakjes uit te sluiten.</p>
   </section>
 </main>
 
