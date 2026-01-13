@@ -38,7 +38,8 @@ function render() {
             const cell = document.createElement("div");
             cell.className = "cell";
             const regionId = currentPuzzle.regions[r][c];
-            cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 85%)`;
+            // LinkedIn shapes: kleur op basis van regio
+            cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 80%)`;
             
             cell.onclick = () => handleMove(r, c);
             board.appendChild(cell);
@@ -65,9 +66,17 @@ function updateUI() {
         const r = Math.floor(i / currentPuzzle.size);
         const c = i % currentPuzzle.size;
         const key = `${r},${c}`;
-        cell.classList.remove("has-queen", "has-mark", "conflict");
-        if (queens.has(key)) cell.classList.add("has-queen");
-        if (marks.has(key)) cell.classList.add("has-mark");
+        
+        cell.classList.remove("has-queen", "has-mark");
+        cell.textContent = ""; 
+        
+        if (queens.has(key)) {
+            cell.classList.add("has-queen");
+            cell.textContent = "Q"; // Geen gouden kroon, gewoon tekst
+        } else if (marks.has(key)) {
+            cell.classList.add("has-mark");
+            cell.textContent = "X"; 
+        }
     });
 }
 
