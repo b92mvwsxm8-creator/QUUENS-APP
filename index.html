@@ -1,32 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Queens - LinkedIn Style</title>
-  <link rel="stylesheet" href="styles.css?v=2">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Queens Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>
-  <h1>Queens</h1>
-  <div class="row">
-    <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
-    <select id="puzzleSelect"></select>
-    <button id="resetBtn" type="button">Reset</button>
-  </div>
-  <p id="status"></p>
-</header>
+    <header>
+        <h1>Queens</h1>
+    </header>
 
-<main>
-  <div id="board" class="board"></div>
-  <section class="rules">
-    <p>Plaats exact één koningin per rij, kolom en gekleurd gebied. Koninginnen mogen elkaar niet raken, ook niet diagonaal. Gebruik kruisjes om vakjes uit te sluiten.</p>
-  </section>
-</main>
+    <div class="controls">
+        <span>Tijd: <span id="timer">00:00</span></span>
+        <button id="resetBtn" onclick="initGame(7)">Reset</button>
+    </div>
 
-<script src="puzzles.js?v=2"></script>
-<script src="app.js?v=2"></script>
+    <div id="board"></div>
 
+    <div class="instructions">
+        <p>Plaats exact één koningin per rij, kolom en gekleurd gebied. Koninginnen mogen elkaar niet raken, ook niet diagonaal. Gebruik kruisjes om vakjes uit te sluiten.</p>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
