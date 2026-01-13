@@ -1,133 +1,133 @@
 :root {
-  --black: #000000;
-  --white: #ffffff;
-  --err-red: #d32f2f;
-  --bg-color: #fdfdfd;
+    --black: #000000;
+    --white: #ffffff;
+    --err-red: #d32f2f;
+    --bg-color: #fdfdfd;
 }
 
 /* 1. Basis reset en Mobiele optimalisatie */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--bg-color);
-  /* Voorkomt inzoomen op iPhone bij dubbelklikken */
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--bg-color);
+    /* Voorkomt inzoomen op iPhone bij dubbelklikken */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 header h1 {
-  font-size: 24px;
-  margin: 15px 0 5px 0;
-  color: var(--black);
+    font-size: 24px;
+    margin: 15px 0 5px 0;
+    color: var(--black);
 }
 
 /* 2. Controls / Knoppen balk */
 .controls {
-  margin: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  max-width: 450px;
+    margin: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 450px;
 }
 
 select, button {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
 }
 
 button {
-  background-color: #f0f0f0;
-  font-weight: bold;
+    background-color: #f0f0f0;
+    font-weight: bold;
 }
 
 .timer-box, .highscore-box {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 14px;
-  padding: 8px 12px;
-  background: #eee;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  min-width: 80px;
-  text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 8px 12px;
+    background: #eee;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    min-width: 80px;
+    text-align: center;
 }
 
 .highscore-box {
-  background: #e3f2fd;
-  color: #0d47a1;
+    background: #e3f2fd;
+    color: #0d47a1;
 }
 
 /* 3. Het Bord (Geforceerd Vierkant) */
 #board-container {
-  width: 95vw;
-  max-width: 440px;
-  aspect-ratio: 1 / 1; /* Houdt het bord vierkant */
-  margin: 10px auto;
-  border: 4px solid var(--black);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 95vw;
+    max-width: 440px;
+    aspect-ratio: 1 / 1; /* Houdt het bord vierkant */
+    margin: 10px auto;
+    border: 4px solid var(--black);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 #board {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(7, 1fr);
-  width: 100%;
-  height: 100%;
-  background-color: var(--black);
-  gap: 2px; /* De zwarte lijnen tussen de vakken */
+    display: grid;
+    /* De grid-template wordt nu door JS geregeld voor 7x7 t/m 10x10 */
+    width: 100%;
+    height: 100%;
+    background-color: var(--black);
+    gap: 2px; /* De zwarte lijnen tussen de vakken */
 }
 
 /* 4. De Cellen */
 .cell {
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  position: relative;
-  user-select: none;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
 }
 
 /* Zwarte Koningin (LinkedIn stijl) */
 .cell.has-queen::after {
-  content: '♛';
-  font-size: clamp(24px, 8vw, 38px); /* Schaalt mee met gridgrootte */
-  color: var(--black);
-  z-index: 2;
+    content: '♛';
+    /* Gebruik clamp voor schaling, maar JS overschrijft dit nu per gridgrootte voor precisie */
+    font-size: 1.2em; 
+    color: var(--black);
+    z-index: 2;
 }
 
 /* Markering (Kruisje) */
 .cell.has-mark::after {
-  content: '✕';
-  color: #444;
-  font-size: clamp(14px, 4vw, 18px);
-  font-weight: bold;
+    content: '✕';
+    color: #444;
+    font-size: 1.1em;
+    font-weight: bold;
 }
 
 /* FOUTMELDING: Rood-wit diagonaal gestreept */
 .cell.bad {
-  background: repeating-linear-gradient(
-    45deg,
-    #ffcdd2,
-    #ffcdd2 10px,
-    #ef9a9a 10px,
-    #ef9a9a 20px
-  ) !important;
+    background: repeating-linear-gradient(
+        45deg,
+        #ffcdd2,
+        #ffcdd2 10px,
+        #ef9a9a 10px,
+        #ef9a9a 20px
+    ) !important;
 }
 
 .cell.bad.has-queen::after {
-  color: var(--err-red);
+    color: var(--err-red);
 }
 
-/* 5. De Regio Kleuren (Hoog contrast) */
+/* 5. De Regio Kleuren (Uitgebreid naar 10 regio's voor 10x10) */
 .cell[data-region="A"] { background-color: #faff8c; } /* Geel */
 .cell[data-region="B"] { background-color: #b399e6; } /* Paars */
 .cell[data-region="C"] { background-color: #f28b50; } /* Oranje */
@@ -135,13 +135,16 @@ button {
 .cell[data-region="E"] { background-color: #a3e6a3; } /* Groen */
 .cell[data-region="F"] { background-color: #fce4ec; } /* Roze */
 .cell[data-region="G"] { background-color: #e0e0e0; } /* Grijs */
+.cell[data-region="H"] { background-color: #ffd54f; } /* Amber */
+.cell[data-region="I"] { background-color: #4db6ac; } /* Teal */
+.cell[data-region="J"] { background-color: #dce775; } /* Lime */
 
 /* 6. Instructies */
 .instructions {
-  padding: 15px;
-  font-size: 13px;
-  color: #666;
-  text-align: center;
-  max-width: 400px;
-  line-height: 1.4;
+    padding: 15px;
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.4;
 }
