@@ -2,20 +2,17 @@ let currentPuzzle, queens = new Set(), marks = new Set(), timerInterval, startTi
 
 function initGame() {
     const size = parseInt(document.getElementById('gridSize').value);
-    queens.clear();
-    marks.clear();
+    queens.clear(); marks.clear();
 
     if (typeof SHAPES !== 'undefined') {
         const available = SHAPES.filter(s => s.regions.length === size);
         if (available.length > 0) {
             const p = available[Math.floor(Math.random() * available.length)];
             currentPuzzle = { size: size, regions: p.regions };
+            document.getElementById('puzzle-name').textContent = p.name;
         } else {
-            // Maak een logisch oplosbaar 7x7 grid als backup
-            currentPuzzle = { size: 7, regions: [
-                ['A','A','B','B','B','C','C'],['A','A','B','B','B','C','C'],['D','D','D','E','E','E','E'],
-                ['D','D','D','E','E','E','E'],['F','F','F','E','E','E','E'],['F','F','F','G','G','G','G'],['F','F','F','G','G','G','G']
-            ]};
+            document.getElementById('puzzle-name').textContent = "Geen puzzel voor deze maat";
+            currentPuzzle = { size: size, regions: Array.from({length:size}, (v, r) => Array(size).fill(String.fromCharCode(65+r))) };
         }
     }
     render();
@@ -56,7 +53,7 @@ function updateUI() {
             if(conflict) { cell.classList.add("bad"); errors = true; }
         } else if(marks.has(k)) cell.classList.add("has-mark");
     });
-    if(queens.size === size && !errors) { clearInterval(timerInterval); setTimeout(()=>alert("Opgelost!"), 100); }
+    if(queens.size === size && !errors) { clearInterval(timerInterval); setTimeout(()=>alert("Gefeliciteerd!"), 100); }
 }
 
 function startTimer() { 
