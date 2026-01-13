@@ -5,11 +5,14 @@ let timerInterval;
 let startTime;
 let currentDifficulty = 'hard';
 
+// De volledige lijst met expert-patronen
 const SHAPES = [
     { name: "Blossom", cells: [[3,3],[2,3],[4,3],[3,2],[3,4]] },
     { name: "Diamond", cells: [[1,3],[2,2],[2,4],[3,1],[3,5],[4,2],[4,4],[5,3]] },
     { name: "Snake", cells: [[1,1],[1,2],[2,2],[2,3],[3,3],[3,4],[4,4]] },
-    { name: "Corridor", cells: [[0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]] }
+    { name: "Corridor", cells: [[0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]] },
+    { name: "Plan 9", cells: [[1,1],[2,1],[3,1],[3,2],[3,3],[2,3],[1,3]] },
+    { name: "Happy 2026", cells: [[0,0],[1,1],[2,2],[3,3],[4,4],[5,5],[6,6]] }
 ];
 
 function generate7x7(difficulty) {
@@ -28,6 +31,7 @@ function generate7x7(difficulty) {
             const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
             shape.cells.forEach(([r, c]) => { regions[r][c] = 'A'; });
         }
+
         for(let i=0; i<3; i++) { 
             let r1 = Math.floor(Math.random()*size);
             let targetChar = regions[r1].find(x => x);
@@ -39,6 +43,7 @@ function generate7x7(difficulty) {
 
     let unassigned = [];
     for (let r=0; r<size; r++) for (let c=0; c<size; c++) if (!regions[r][c]) unassigned.push({r, c});
+    
     const bias = difficulty === 'easy' ? 0.1 : (difficulty === 'medium' ? 0.5 : 0.85);
 
     while (unassigned.length > 0) {
@@ -77,6 +82,7 @@ function handleWin() {
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
     const bestKey = `best_7x7_${currentDifficulty}`;
     const bestTime = localStorage.getItem(bestKey);
+    
     let msg = `Gefeliciteerd! Tijd: ${formatTime(timeSpent)}`;
     if (!bestTime || timeSpent < parseInt(bestTime)) {
         localStorage.setItem(bestKey, timeSpent);
