@@ -79,8 +79,8 @@ function update() {
 
   if (queens.size === currentPuzzle.size && conflicts.size === 0) {
     clearInterval(timerInterval);
-    document.getElementById("status").textContent = "Opgelost!";
-    document.getElementById("status").classList.add("won");
+    document.getElementById("status").textContent = "Opgelost! 🎉";
+    document.getElementById("status").className = "won";
   }
 }
 
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   PUZZLES.forEach((p, i) => {
     const o = document.createElement("option");
     o.value = i;
-    o.textContent = p.name || p.label;
+    o.textContent = p.name;
     select.appendChild(o);
   });
   select.onchange = (e) => loadPuzzle(e.target.value);
