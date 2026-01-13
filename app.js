@@ -38,9 +38,15 @@ function render() {
       cell.dataset.region = currentPuzzle.regions[r][c];
       cell.onclick = () => {
         const k = key(r, c);
-        if (marks.has(k)) { marks.delete(k); queens.add(k); }
-        else if (queens.has(k)) { queens.delete(k); }
-        else { marks.add(k); }
+        // Cyclus: leeg -> kruisje -> koningin -> leeg
+        if (!marks.has(k) && !queens.has(k)) {
+          marks.add(k);
+        } else if (marks.has(k)) {
+          marks.delete(k);
+          queens.add(k);
+        } else {
+          queens.delete(k);
+        }
         update();
       };
       board.appendChild(cell);
@@ -80,7 +86,6 @@ function update() {
   if (queens.size === currentPuzzle.size && conflicts.size === 0) {
     clearInterval(timerInterval);
     document.getElementById("status").textContent = "Opgelost! 🎉";
-    document.getElementById("status").className = "won";
   }
 }
 
