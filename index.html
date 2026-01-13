@@ -3,53 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Game</title>
+    <title>Queens Game - Expert</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#2c3e50">
 </head>
 <body>
-    <div class="container">
-        <h1>Queens Game</h1>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="size-select">Grootte:</label>
-                <select id="size-select" onchange="initGame()">
-                    <option value="5">5x5</option>
-                    <option value="6">6x6</option>
+    <div class="game-container">
+        <div class="header">
+            <h1>Queens</h1>
+            <div class="controls">
+                <select id="gridSize" onchange="initGame()">
                     <option value="7">7x7</option>
                     <option value="8">8x8</option>
                     <option value="9">9x9</option>
                     <option value="10" selected>10x10</option>
                 </select>
-            </div>
-
-            <div class="control-group">
-                <label for="difficulty">Niveau:</label>
                 <select id="difficulty" onchange="initGame()">
                     <option value="easy">Makkelijk</option>
-                    <option value="medium" selected>Gemiddeld</option>
-                    <option value="hard">Expert</option>
+                    <option value="medium">Gemiddeld</option>
+                    <option value="hard">Moeilijk</option>
+                    <option value="expert" selected>Expert</option>
                 </select>
+            </div>
+            <div class="stats">
+                <span>Tijd: <span id="timer">00:00</span></span>
+                <span>Best: <span id="best-time">--:--</span></span>
             </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-box">Tijd: <span id="timer">00:00</span></div>
-            <div class="stat-box">Beste: <span id="best-time">--:--</span></div>
-        </div>
+        <div id="board" class="grid"></div>
 
-        <div id="board" class="board"></div>
-
-        <div class="actions">
+        <div class="footer-actions">
             <button onclick="initGame()" class="btn">Nieuw Spel</button>
         </div>
     </div>
-
-    <script src="puzzles.js"></script>
     <script src="app.js"></script>
-    <script>
-   
 </body>
 </html>
