@@ -1,40 +1,46 @@
-// Configuratie en Staat
 let currentPuzzle = null;
 let queens = new Set();
 let marks = new Set();
 let timerInterval;
 
-// 1. WISKUNDIGE GENERATOR (Garandeert oplosbaarheid)
-function generatePuzzle(size) {
-    const seed = new Date().toDateString(); // Elke dag een nieuwe unieke puzzel
+// Organische Generator voor LinkedIn-stijl regio's (kleiner en grilliger)
+function generateOrganicPuzzle(size) {
     const regions = Array.from({ length: size }, () => Array(size).fill(null));
-    
-    // Plaats koninginnen volgens de regels (geen rij/kolom/diagonaal overlap)
     const queenCoords = [];
-    const rows = Array.from({ length: size }, (_, i) => i);
-    shuffle(rows);
     
+    // 1. Plaats koninginnen (geen conflict in rij/kolom/diagonaal)
+    let rows = Array.from({ length: size }, (_, i) => i);
+    shuffle(rows);
     for (let r = 0; r < size; r++) {
         queenCoords.push({ r, c: rows[r] });
+        regions[r][rows[r]] = String.fromCharCode(65 + r);
     }
 
-    // Gebruik Voronoi-algoritme om regio's rond de koninginnen te bouwen
-    // Dit zorgt dat elke regio exact één koningin bevat
+    // 2. Laat regio's organisch groeien (kleinere velden)
+    let unassigned = [];
     for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
-            let minDist = Infinity;
-            let closestQueen = 0;
-            queenCoords.forEach((q, index) => {
-                const dist = Math.abs(r - q.r) + Math.abs(c - q.c);
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestQueen = index;
-                }
-            });
-            regions[r][c] = String.fromCharCode(65 + closestQueen); // Regio A, B, C...
+            if (regions[r][c] === null) unassigned.push({r, c});
         }
     }
-    return { size, regions, name: `Daily ${size}x${size}` };
+
+    while (unassigned.length > 0) {
+        shuffle(unassigned);
+        for (let i = unassigned.length - 1; i >= 0; i--) {
+            const {r, c} = unassigned[i];
+            const neighbors = [[r-1,c], [r+1,c], [r,c-1], [r,c+1]];
+            const validNeighbors = neighbors.filter(([nr, nc]) => 
+                nr >= 0 && nr < size && nc >= 0 && nc < size && regions[nr][nc] !== null
+            );
+            
+            if (validNeighbors.length > 0) {
+                const [nr, nc] = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+                regions[r][c] = regions[nr][nc];
+                unassigned.splice(i, 1);
+            }
+        }
+    }
+    return { size, regions };
 }
 
 function shuffle(array) {
@@ -44,34 +50,29 @@ function shuffle(array) {
     }
 }
 
-// 2. GAME LOGICA
-function loadPuzzle(size) {
-    currentPuzzle = generatePuzzle(size);
+function initGame(size) {
+    currentPuzzle = generateOrganicPuzzle(size);
     queens.clear();
     marks.clear();
-    render();
+    const board = document.getElementById("board");
+    if (board) {
+        board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+        board.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+        render();
+    }
     startTimer();
 }
 
 function render() {
     const board = document.getElementById("board");
     board.innerHTML = "";
-    const n = currentPuzzle.size;
-    
-    // Strakke grid layout tegen het uitrekken
-    board.style.display = "grid";
-    board.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-    board.style.gridTemplateRows = `repeat(${n}, 1fr)`;
-    board.style.aspectRatio = "1 / 1"; 
-
-    for (let r = 0; r < n; r++) {
-        for (let c = 0; c < n; c++) {
+    for (let r = 0; r < currentPuzzle.size; r++) {
+        for (let c = 0; c < currentPuzzle.size; c++) {
             const cell = document.createElement("div");
             cell.className = "cell";
             cell.dataset.region = currentPuzzle.regions[r][c];
-            
+            const k = `${r},${c}`;
             cell.onclick = () => {
-                const k = `${r},${c}`;
                 if (!marks.has(k) && !queens.has(k)) {
                     marks.add(k);
                 } else if (marks.has(k)) {
@@ -89,29 +90,24 @@ function render() {
 
 function updateUI() {
     const cells = document.querySelectorAll(".cell");
-    let i = 0;
     const qArr = Array.from(queens).map(k => k.split(',').map(Number));
-
-    cells.forEach(cell => {
+    cells.forEach((cell, i) => {
         const r = Math.floor(i / currentPuzzle.size);
         const c = i % currentPuzzle.size;
         const k = `${r},${c}`;
         cell.classList.remove("has-queen", "has-mark", "bad");
-        
         if (queens.has(k)) {
             cell.classList.add("has-queen");
-            // Check op conflicten (rij, kolom, regio, diagonaal)
-            const conflict = qArr.some(([qr, qc]) => {
+            const hasConflict = qArr.some(([qr, qc]) => {
                 if (qr === r && qc === c) return false;
                 return qr === r || qc === c || 
                        currentPuzzle.regions[qr][qc] === currentPuzzle.regions[r][c] ||
                        (Math.abs(qr - r) <= 1 && Math.abs(qc - c) <= 1);
             });
-            if (conflict) cell.classList.add("bad");
+            if (hasConflict) cell.classList.add("bad");
         } else if (marks.has(k)) {
             cell.classList.add("has-mark");
         }
-        i++;
     });
 }
 
@@ -125,4 +121,4 @@ function startTimer() {
     }, 1000);
 }
 
-document.addEventListener("DOMContentLoaded", () => loadPuzzle(7));
+document.addEventListener("DOMContentLoaded", () => initGame(5)); // Start met 5x5 voor de logica
