@@ -5,16 +5,21 @@ let timerInterval;
 let startTime;
 
 function initGame() {
-    const size = 10;
-    const difficulty = 'expert';
+    const sizeSelect = document.getElementById('gridSize');
+    const diffSelect = document.getElementById('difficulty');
+    const size = sizeSelect ? parseInt(sizeSelect.value) : 10;
+    const difficulty = diffSelect ? diffSelect.value : 'expert';
     
     queens.clear();
     marks.clear();
     if (timerInterval) clearInterval(timerInterval);
 
-    if (typeof SHAPES !== 'undefined' && SHAPES.length > 0) {
+    if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
         const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         currentPuzzle = { size: 10, regions: shape.regions };
+    } else if (typeof PUZZLES !== 'undefined') {
+        const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
+        currentPuzzle = { size: pData.size, regions: pData.regions };
     }
     
     render();
@@ -34,6 +39,7 @@ function render() {
             cell.className = "cell";
             const regionId = currentPuzzle.regions[r][c];
             cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 80%)`;
+            
             cell.onclick = () => handleMove(r, c);
             board.appendChild(cell);
         }
@@ -59,10 +65,15 @@ function updateUI() {
         const r = Math.floor(i / currentPuzzle.size);
         const c = i % currentPuzzle.size;
         const key = `${r},${c}`;
+        
+        cell.classList.remove("has-queen", "has-mark");
         cell.textContent = ""; 
+        
         if (queens.has(key)) {
-            cell.textContent = "Q"; // GEEN gouden kroon
+            cell.classList.add("has-queen");
+            cell.textContent = "Q"; 
         } else if (marks.has(key)) {
+            cell.classList.add("has-mark");
             cell.textContent = "X"; 
         }
     });
@@ -78,7 +89,9 @@ function startTimer() {
 }
 
 function formatTime(s) {
-    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    const mins = Math.floor(s / 60).toString().padStart(2, '0');
+    const secs = (s % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
 }
 
 document.addEventListener('DOMContentLoaded', initGame);
