@@ -1,22 +1,95 @@
-const PUZZLES = [
-  { size: 5, regions: [["A","A","A","B","B"],["C","A","A","B","B"],["C","C","D","D","D"],["E","E","E","E","D"],["E","E","E","D","D"]] },
-  { size: 6, regions: [["A","A","B","B","B","B"],["A","A","C","C","B","B"],["D","D","C","C","E","E"],["D","D","F","F","E","E"],["G","G","F","F","H","H"],["G","G","G","G","H","H"]] },
-  { size: 7, regions: [["A","A","A","B","B","B","B"],["A","A","A","C","C","B","B"],["D","D","C","C","C","E","E"],["D","D","F","F","F","E","E"],["G","G","F","F","F","H","H"],["G","G","I","I","I","H","H"],["G","G","I","I","I","I","I"]] }
-];
+let currentPuzzle = null;
+let queens = new Set();
+let marks = new Set();
+let timerInterval;
+let startTime;
 
-const SHAPES = [
-    { name: "Blossom", size: 10, cells: [[3,3],[3,4],[4,3],[4,4],[2,3],[2,4],[5,3],[5,4],[3,2],[4,2],[3,5],[4,5]] },
-    { name: "Small Snake", size: 10, cells: [[2,1],[2,2],[3,2],[4,2],[4,3],[5,3]] },
-    { name: "Big Loop", size: 10, cells: [[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],[7,6],[7,5],[7,4],[7,3],[7,2],[7,1],[6,1],[5,1],[4,1],[3,1],[2,1]] },
-    { name: "Hi", size: 10, cells: [[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[3,2],[3,3],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4]] },
-    { name: "Plan 9", size: 10, cells: [[1,2],[1,3],[1,4],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],[6,4],[6,3],[6,2],[5,2],[4,2],[3,2],[2,2],[3,3],[3,4]] },
-    { name: "Elite Eight", size: 10, cells: [[0,0],[0,1],[1,0],[1,1],[6,6],[6,7],[7,6],[7,7],[0,6],[0,7],[1,6],[1,7],[6,0],[6,1],[7,0],[7,1]] },
-    { name: "The Queen", size: 10, cells: [[1,4],[2,3],[2,5],[3,2],[3,4],[3,6],[4,4],[5,4]] },
-    { name: "Diamond Ring", size: 10, cells: [[0,4],[1,3],[1,5],[2,2],[2,6],[3,1],[3,7],[4,0],[4,8],[5,1],[5,7],[6,2],[6,6],[7,3],[7,5],[8,4]] },
-    { name: "Trominoes", size: 10, cells: [[0,0],[0,1],[1,0],[5,6],[6,6],[6,5],[0,6],[1,6],[0,5]] },
-    { name: "One Direction", size: 10, cells: [[0,0],[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] },
-    { name: "Two Way Arrow", size: 10, cells: [[0,0],[1,1],[2,2],[0,2],[2,0],[6,6],[7,7],[8,8],[6,8],[8,6]] },
-    { name: "Tetrominoes", size: 10, cells: [[0,0],[0,1],[1,0],[1,1],[0,6],[0,7],[1,6],[1,7],[6,0],[6,1],[7,0],[7,1],[6,6],[6,7],[7,6],[7,7]] },
-    { name: "Happy 2026", size: 10, cells: [[1,1],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2],[8,3],[8,4],[8,5]] },
-    { name: "Count down", size: 10, cells: [[0,9],[1,8],[2,7],[3,6],[4,5],[5,4],[6,3],[7,2],[8,1],[9,0]] }
-];
+// 1. De volledige logica voor het initialiseren van het spel
+function initGame() {
+    const sizeSelect = document.getElementById('gridSize');
+    const diffSelect = document.getElementById('difficulty');
+    const size = sizeSelect ? parseInt(sizeSelect.value) : 10;
+    const difficulty = diffSelect ? diffSelect.value : 'expert';
+    
+    queens.clear();
+    marks.clear();
+    clearInterval(timerInterval);
+
+    // Expert modus gebruikt de SHAPES uit puzzles.js
+    if (difficulty === 'expert' && size === 10 && typeof SHAPES !== 'undefined') {
+        const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        currentPuzzle = { size: 10, regions: shape.regions };
+    } else if (typeof PUZZLES !== 'undefined') {
+        const pData = PUZZLES.find(p => p.size === size) || PUZZLES[0];
+        currentPuzzle = { size: pData.size, regions: pData.regions };
+    }
+    
+    render();
+    startTimer();
+}
+
+// 2. De render functie die de kleuren en cellen tekent
+function render() {
+    const board = document.getElementById('board');
+    if (!board || !currentPuzzle) return;
+    
+    board.style.gridTemplateColumns = `repeat(${currentPuzzle.size}, 1fr)`;
+    board.innerHTML = "";
+
+    for (let r = 0; r < currentPuzzle.size; r++) {
+        for (let c = 0; c < currentPuzzle.size; c++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            // Gebruik de regio-ID voor een unieke kleur
+            const regionId = currentPuzzle.regions[r][c];
+            cell.style.backgroundColor = `hsl(${regionId * 36}, 60%, 85%)`;
+            
+            cell.onclick = () => handleMove(r, c);
+            board.appendChild(cell);
+        }
+    }
+}
+
+// 3. Spelregels en interactie
+function handleMove(r, c) {
+    const key = `${r},${c}`;
+    if (queens.has(key)) {
+        queens.delete(key);
+        marks.add(key);
+    } else if (marks.has(key)) {
+        marks.delete(key);
+    } else {
+        queens.add(key);
+    }
+    updateUI();
+    checkWin();
+}
+
+function updateUI() {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell, i) => {
+        const r = Math.floor(i / currentPuzzle.size);
+        const c = i % currentPuzzle.size;
+        const key = `${r},${c}`;
+        cell.classList.remove("has-queen", "has-mark", "conflict");
+        if (queens.has(key)) cell.classList.add("has-queen");
+        if (marks.has(key)) cell.classList.add("has-mark");
+    });
+}
+
+// 4. Timer functies
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+        const diff = Math.floor((Date.now() - startTime) / 1000);
+        const timerEl = document.getElementById('timer');
+        if (timerEl) timerEl.textContent = formatTime(diff);
+    }, 1000);
+}
+
+function formatTime(s) {
+    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// Start het spel zodra de pagina geladen is
+document.addEventListener('DOMContentLoaded', initGame);
