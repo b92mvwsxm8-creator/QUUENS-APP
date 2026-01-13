@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Queens 7x7</h1>
-    </header>
+    <header><h1>Queens 7x7</h1></header>
     <div class="controls">
         <select id="difficulty" onchange="initGame(7, this.value)">
             <option value="easy">Niveau: Simpel</option>
@@ -17,12 +15,8 @@
             <option value="hard" selected>Niveau: Expert</option>
         </select>
         <button onclick="initGame(7, document.getElementById('difficulty').value)">Nieuwe Puzzel</button>
-        <div class="timer-box">
-            Tijd: <span id="timer">00:00</span>
-        </div>
-        <div class="highscore-box">
-            PR: <span id="best-time">--:--</span>
-        </div>
+        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
+        <div class="highscore-box">PR: <span id="best-time">--:--</span></div>
     </div>
     <div id="board-container">
         <div id="board"></div>
