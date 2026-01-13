@@ -3,44 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens LinkedIn Expert</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Queens Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#2c3e50">
 </head>
 <body>
-    <header><h1>Queens Expert</h1></header>
-
-    <div class="controls">
-        <select id="size-select" onchange="initGame()">
-            <option value="7">Grid: 7x7</option>
-            <option value="8" selected>Grid: 8x8</option>
-            <option value="9">Grid: 9x9</option>
-            <option value="10">Grid: 10x10</option>
-        </select>
-
-        <select id="difficulty" onchange="initGame()">
-            <option value="easy">Niveau: Simpel</option>
-            <option value="medium">Niveau: Gemiddeld</option>
-            <option value="hard" selected>Niveau: Expert</option>
-        </select>
-
-        <button onclick="initGame()">Nieuwe Puzzel</button>
+    <div class="container">
+        <h1>Queens Game</h1>
         
-        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
-        <div class="highscore-box">PR: <span id="best-time">--:--</span></div>
+        <div class="controls">
+            <div class="control-group">
+                <label for="size-select">Grootte:</label>
+                <select id="size-select" onchange="initGame()">
+                    <option value="5">5x5</option>
+                    <option value="6">6x6</option>
+                    <option value="7">7x7</option>
+                    <option value="8">8x8</option>
+                    <option value="9">9x9</option>
+                    <option value="10" selected>10x10</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="difficulty">Niveau:</label>
+                <select id="difficulty" onchange="initGame()">
+                    <option value="easy">Makkelijk</option>
+                    <option value="medium" selected>Gemiddeld</option>
+                    <option value="hard">Expert</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">Tijd: <span id="timer">00:00</span></div>
+            <div class="stat-box">Beste: <span id="best-time">--:--</span></div>
+        </div>
+
+        <div id="board" class="board"></div>
+
+        <div class="actions">
+            <button onclick="initGame()" class="btn">Nieuw Spel</button>
+        </div>
     </div>
 
-    <div id="board-container">
-        <div id="board"></div>
-    </div>
-
-    <div class="instructions">
-        <h3>Hoe speel je Queens?</h3>
-        <p>1. Eén kroon per rij, kolom en kleurvlak.</p>
-        <p>2. Kronen mogen elkaar niet diagonaal raken.</p>
-        <p>3. Gebruik ✕ om vakjes uit te sluiten.</p>
-        <p><i>Tik 1x voor ✕, tik 2x voor een kroon.</i></p>
-    </div>
-
+    <script src="puzzles.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Registreer de Service Worker voor PWA (installatie op telefoon)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
