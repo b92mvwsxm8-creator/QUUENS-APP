@@ -4,7 +4,10 @@ let startTime;
 let timerInterval;
 
 function init() {
-    if (typeof QUEENS_LEVELS === 'undefined') return;
+    if (typeof QUEENS_LEVELS === 'undefined') {
+        alert("Fout: levels.js niet gevonden.");
+        return;
+    }
     loadLevel(0);
 }
 
@@ -23,7 +26,7 @@ function startTimer() {
 function loadLevel(index) {
     currentLevelIndex = index;
     const level = QUEENS_LEVELS[currentLevelIndex];
-    // Maakt een bord op basis van de ECHTE grootte (bijv. 8x8)
+    // Gebruikt de 'size' uit de data (7 voor 7x7, 8 voor 8x8)
     boardState = Array.from({ length: level.size }, () => Array(level.size).fill(0));
     document.getElementById('level-indicator').innerText = `Level: ${level.id}`;
     renderBoard();
@@ -34,8 +37,7 @@ function renderBoard() {
     const grid = document.getElementById('grid');
     const level = QUEENS_LEVELS[currentLevelIndex];
     grid.innerHTML = '';
-    grid.style.display = 'grid';
-    // Dynamisch raster op basis van level.size
+    // Past het aantal kolommen aan aan de grootte van de puzzel
     grid.style.gridTemplateColumns = `repeat(${level.size}, 1fr)`;
 
     for (let r = 0; r < level.size; r++) {
@@ -60,7 +62,7 @@ function updateDisplay() {
     for (let r = 0; r < level.size; r++) {
         for (let c = 0; c < level.size; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
-            cell.innerText = ''; // Forceert een leeg vakje voor we tekenen
+            cell.innerText = ''; // Maakt cel ECHT leeg voor we iets nieuws plaatsen
             cell.classList.remove('queen', 'mark', 'error');
             
             if (boardState[r][c] === 1) {
@@ -93,7 +95,13 @@ function validate() {
     });
 }
 
-function nextLevel() { loadLevel((currentLevelIndex + 1) % QUEENS_LEVELS.length); }
-function resetLevel() { loadLevel(currentLevelIndex); }
+function nextLevel() {
+    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
+    loadLevel(currentLevelIndex);
+}
+
+function resetLevel() {
+    loadLevel(currentLevelIndex);
+}
 
 window.onload = init;
