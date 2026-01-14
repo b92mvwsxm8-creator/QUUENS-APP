@@ -6,10 +6,6 @@ const altoMain = "#DFDFDF";
 const bittersweet = "#FF7B60";
 const saharaSand = "#E6F388";
 const lightOrchid = "#DFA0BF";
-const nomad = "#B9B29E";
-const lavenderRose = "#FE93F1";
-const turquoiseBlue = "#55EBE2";
-const tallow = "#A8A011";
 
 const QUEENS_LEVELS = [
     { id: 102, colorRegions: [["A","A","A","A","A","B","B"],["A","C","A","A","A","B","B"],["A","C","C","C","C","C","C"],["A","C","E","E","D","D","D"],["A","C","E","G","D","F","F"],["A","A","E","G","D","G","F"],["A","A","E","G","G","G","F"]], regionColors: { A: lightOrchid, B: chardonnay, C: anakiwa, D: celadon, E: altoMain, F: bittersweet, G: saharaSand } },
