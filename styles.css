@@ -1,30 +1,43 @@
-:root {
-    --cell-size: 50px;
-}
-
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     background: #f0f0f0;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
 }
 
-/* Veranderd van # naar . om te matchen met index.html */
 .game-container {
-    max-width: 400px;
     width: 100%;
+    max-width: 450px;
     text-align: center;
 }
 
-/* Veranderd van . naar # om te matchen met app.js */
 #grid {
     display: grid;
-    border: 4px solid #333;
-    gap: 1px;
-    background: #333;
-    margin: 20px auto;
-    width: fit-content;
+    margin: 10px auto;
+    border: 2px solid #333;
+    background: #333; /* De kleur van de rasterlijnen */
+    gap: 1px; 
+    width: 95vw;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
 }
+
+.cell {
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px; /* Iets kleiner voor 8x8 support */
+    cursor: pointer;
+    user-select: none;
+}
+
+.cell.queen { color: black; font-weight: bold; }
+.cell.mark { color: #888; }
+.cell.error { background-color: #FF7B60 !important; }
+
+.controls { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+button { padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #333; color: white; }
