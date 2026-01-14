@@ -1,22 +1,10 @@
-// Jouw officiële kleurcodes
 const COLORS = {
-    altoMain: "#DFDFDF",
-    anakiwa: "#96BEFF",
-    atomicTangerine: "#FAA889",
-    bittersweet: "#FF7B60",
-    celadon: "#B3DFA0",
-    chardonnay: "#FFC992",
-    emerald: "#5BBA6F",
-    halfBaked: "#95CBCF",
-    lavenderRose: "#FE93F1",
-    lightGreen: "#91F5AD",
-    lightOrchid: "#DFA0BF",
-    lightWisteria: "#BBA3E2",
-    nomad: "#B9B29E",
-    periwinkle: "#C9C9EE",
-    saharaSand: "#E6F388",
-    turquoiseBlue: "#55EBE2",
-    white: "#FFFFFF"
+    altoMain: "#DFDFDF", anakiwa: "#96BEFF", atomicTangerine: "#FAA889",
+    bittersweet: "#FF7B60", celadon: "#B3DFA0", chardonnay: "#FFC992",
+    emerald: "#5BBA6F", halfBaked: "#95CBCF", lavenderRose: "#FE93F1",
+    lightGreen: "#91F5AD", lightOrchid: "#DFA0BF", lightWisteria: "#BBA3E2",
+    nomad: "#B9B29E", periwinkle: "#C9C9EE", saharaSand: "#E6F388",
+    turquoiseBlue: "#55EBE2", white: "#FFFFFF"
 };
 
 const QUEENS_LEVELS = [
@@ -32,5 +20,10 @@ const QUEENS_LEVELS = [
     { id: 187, size: 7, colorRegions: [["A","B","B","C","C","D","D"],["A","B","B","C","C","D","D"],["A","A","B","B","B","B","B"],["E","E","E","B","B","B","B"],["F","F","F","B","G","G","G"],["F","F","F","B","G","G","G"],["F","F","F","B","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
     { id: 191, size: 7, colorRegions: [["A","A","A","A","B","B","B"],["C","C","C","C","C","B","B"],["C","C","C","C","C","B","B"],["D","D","D","E","B","B","B"],["D","D","F","E","E","E","G"],["D","F","F","F","F","G","G"],["F","F","F","F","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
     { id: 192, size: 7, colorRegions: [["A","A","B","B","C","D","D"],["A","A","B","B","C","D","D"],["E","E","E","E","C","D","D"],["E","E","E","E","C","D","D"],["E","F","F","F","F","F","F"],["G","G","G","G","G","G","G"],["G","G","G","G","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
-    { id: 196, size: 7, colorRegions: [["A","A","B","B","B","C","C"],["A","A","A","B","B","C","C"],["D","D","A","D","D","E","C"],["D","D","D","D","D","E","E"],["F","D","D","D","G","G","E"],["F","D","D","D","D","G","E"],["F","F","F","F","F","G","E"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } }
+    { id: 196, size: 7, colorRegions: [["A","A","B","B","B","C","C"],["A","A","A","B","B","C","C"],["D","D","A","D","D","E","C"],["D","D","D","D","D","E","E"],["F","D","D","D","G","G","E"],["F","D","D","D","D","G","E"],["F","F","F","F","F","G","E"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
+    { id: 197, size: 7, colorRegions: [["A","A","B","B","C","C","C"],["A","A","B","B","C","C","C"],["D","D","D","D","C","C","C"],["E","E","E","E","E","E","E"],["F","F","F","G","G","G","G"],["F","F","F","G","G","G","G"],["F","F","F","G","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
+    { id: 198, size: 7, colorRegions: [["A","A","A","A","A","A","A"],["B","B","C","C","D","D","D"],["B","B","C","C","D","D","D"],["E","E","E","E","E","E","E"],["F","F","F","G","G","G","G"],["F","F","F","G","G","G","G"],["F","F","F","G","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
+    { id: 199, size: 7, colorRegions: [["A","B","B","B","C","C","C"],["A","A","B","B","C","C","C"],["A","A","A","B","B","C","C"],["D","D","D","D","D","D","D"],["E","E","E","F","F","G","G"],["E","E","F","F","F","G","G"],["E","F","F","F","F","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } },
+    { id: 200, size: 7, colorRegions: [["A","A","A","B","B","B","B"],["A","A","A","B","B","B","B"],["C","C","C","C","C","C","C"],["D","D","D","E","E","E","E"],["F","F","F","E","E","E","E"],["F","F","F","G","G","G","G"],["F","F","F","G","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bit bittersweet, G: COLORS.saharaSand } },
+    { id: 201, size: 7, colorRegions: [["A","A","A","A","A","B","B"],["C","C","C","C","C","B","B"],["D","D","D","D","D","D","D"],["E","E","E","F","F","F","F"],["E","E","E","F","F","F","F"],["G","G","G","G","G","G","G"],["G","G","G","G","G","G","G"]], regionColors: { A: COLORS.lightWisteria, B: COLORS.chardonnay, C: COLORS.anakiwa, D: COLORS.celadon, E: COLORS.altoMain, F: COLORS.bittersweet, G: COLORS.saharaSand } }
 ];
