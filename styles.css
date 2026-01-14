@@ -1,5 +1,5 @@
 body { 
-    font-family: -apple-system, sans-serif; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     display: flex; 
     justify-content: center; 
     background-color: #f0f0f0; 
@@ -11,6 +11,8 @@ body {
 .game-container { 
     width: 100%; 
     max-width: 450px; 
+    display: flex;
+    flex-direction: column;
 }
 
 .status-bar { 
@@ -28,51 +30,73 @@ body {
 #best-time { font-size: 11px; color: #888; margin-top: 2px; }
 #level-indicator { font-weight: bold; font-size: 16px; }
 
-/* DIT DEEL ZORGT VOOR DE VIERKANTE VAKJES */
+/* HET GRID */
 #grid {
     display: grid;
+    grid-template-columns: repeat(7, 1fr);
     gap: 1px;
     background-color: #333;
     width: 100%;
-    aspect-ratio: 1 / 1; /* Breedte en hoogte blijven altijd gelijk */
     border: 2px solid #333;
     box-sizing: border-box;
     margin: 10px auto;
 }
 
+/* DE FIX: VIERKANTE VAKJES */
 .cell { 
     width: 100%; 
-    height: 100%; /* Vult de volledige hoogte van het grid-vakje */
+    aspect-ratio: 1 / 1; /* Dwingt een perfect vierkant af per vakje */
     display: flex; 
     align-items: center; 
     justify-content: center; 
     cursor: pointer; 
     user-select: none;
+    /* De achtergrondkleur wordt via JS ingesteld, maar we zorgen dat de cel de ruimte vult */
 }
 
-/* SYMBOLEN GROOTTE */
-.queen { font-size: 34px; color: #000; line-height: 1; } 
-.cross { font-size: 14px; color: rgba(0,0,0,0.4); line-height: 1; }
+/* SYMBOLEN */
+.queen { 
+    font-size: 30px; 
+    color: #000; 
+    line-height: 0; 
+    display: block;
+} 
 
-.cell.error { background-color: #ff4d4d !important; }
-.cell.error .queen { color: white; }
+.cross { 
+    font-size: 14px; 
+    color: rgba(0,0,0,0.3); 
+    line-height: 0; 
+    display: block;
+}
 
+/* FOUTMELDING */
+.cell.error { 
+    background-color: #ff4d4d !important; 
+}
+
+.cell.error .queen { 
+    color: white; 
+}
+
+/* BEDIENING */
 .controls { 
     margin-top: 20px; 
     display: flex; 
     gap: 10px; 
-    justify-content: center; 
 }
 
 button { 
-    padding: 12px 20px; 
+    padding: 15px; 
     border: none; 
-    border-radius: 8px; 
+    border-radius: 10px; 
     background: #333; 
     color: white; 
     font-weight: bold; 
     cursor: pointer;
     flex: 1;
+    font-size: 16px;
 }
 
-button:active { background: #555; }
+button:active { 
+    background: #555; 
+}
