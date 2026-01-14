@@ -1,60 +1,85 @@
-let currentLevelIndex = 0;
-let boardState = []; // 0=leeg, 1=kruisje, 2=koningin
+// Volledige kleurlijst zoals door jou aangeleverd
+const PALETTE = {
+    altoMain: "#DFDFDF", anakiwa: "#96BEFF", atomicTangerine: "#FAA889",
+    bittersweet: "#FF7B60", celadon: "#B3DFA0", chardonnay: "#FFC992",
+    emerald: "#5BBA6F", halfBaked: "#95CBCF", lavenderRose: "#FE93F1",
+    lightGreen: "#91F5AD", lightOrchid: "#DFA0BF", lightWisteria: "#BBA3E2",
+    nomad: "#B9B29E", periwinkle: "#C9C9EE", saharaSand: "#E6F388",
+    turquoiseBlue: "#55EBE2", white: "#FFFFFF"
+};
 
-function startGame() {
-    const level = QUEENS_LEVELS[currentLevelIndex];
-    boardState = Array.from({ length: 7 }, () => Array(7).fill(0));
-    renderBoard(level);
+let currentLevelIndex = 0;
+let boardState = []; 
+
+function init() {
+    if (typeof QUEENS_LEVELS === 'undefined') return;
+    loadLevel(0);
 }
 
-function renderBoard(level) {
+function loadLevel(index) {
+    currentLevelIndex = index;
+    const level = QUEENS_LEVELS[index];
+    boardState = Array.from({ length: level.size }, () => Array(level.size).fill(0));
+    renderBoard();
+}
+
+function renderBoard() {
     const grid = document.getElementById('grid');
+    const level = QUEENS_LEVELS[currentLevelIndex];
     grid.innerHTML = '';
-    
-    level.colorRegions.forEach((row, r) => {
-        row.forEach((region, c) => {
+    grid.style.gridTemplateColumns = `repeat(${level.size}, 1fr)`;
+
+    for (let r = 0; r < level.size; r++) {
+        for (let c = 0; c < level.size; c++) {
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.id = `cell-${r}-${c}`;
-            cell.style.backgroundColor = level.regionColors[region];
             
-            // IPHONE KLIK: Roteer status
-            cell.onclick = () => {
+            // Gebruik kleur uit level of fallback naar palette
+            const region = level.colorRegions[r][c];
+            cell.style.backgroundColor = level.regionColors[region] || PALETTE.altoMain;
+            
+            // De herstelde 3-staps klik voor iPhone
+            cell.onclick = (e) => {
+                e.preventDefault();
                 boardState[r][c] = (boardState[r][c] + 1) % 3;
-                updateVisuals();
-                validateBoard();
+                updateDisplay();
+                validate();
             };
-            
             grid.appendChild(cell);
-        });
-    });
-    updateVisuals();
+        }
+    }
+    updateDisplay();
 }
 
-function updateVisuals() {
-    for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 7; c++) {
+function updateDisplay() {
+    for (let r = 0; r < boardState.length; r++) {
+        for (let c = 0; c < boardState[r].length; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
             cell.classList.remove('queen', 'mark', 'error');
-            if (boardState[r][c] === 1) cell.classList.add('mark');
-            if (boardState[r][c] === 2) cell.classList.add('queen');
+            if (boardState[r][c] === 1) cell.innerHTML = '✕'; 
+            else if (boardState[r][c] === 2) cell.innerHTML = '♛';
+            else cell.innerHTML = '';
         }
     }
 }
 
-function validateBoard() {
+function validate() {
     const level = QUEENS_LEVELS[currentLevelIndex];
     const queens = [];
-    for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 7; c++) {
-            if (boardState[r][c] === 2) queens.push({r, c, region: level.colorRegions[r][c]});
+    // Reset alle errors eerst
+    document.querySelectorAll('.cell').forEach(c => c.classList.remove('error'));
+
+    for (let r = 0; r < level.size; r++) {
+        for (let c = 0; c < level.size; c++) {
+            if (boardState[r][c] === 2) queens.push({ r, c, reg: level.colorRegions[r][c] });
         }
     }
 
     queens.forEach((q1, i) => {
         queens.forEach((q2, j) => {
             if (i === j) return;
-            const conflict = (q1.r === q2.r) || (q1.c === q2.c) || (q1.region === q2.region) ||
+            const conflict = (q1.r === q2.r) || (q1.c === q2.c) || (q1.reg === q2.reg) ||
                              (Math.abs(q1.r - q2.r) === 1 && Math.abs(q1.c - q2.c) === 1);
             if (conflict) {
                 document.getElementById(`cell-${q1.r}-${q1.c}`).classList.add('error');
@@ -64,14 +89,4 @@ function validateBoard() {
     });
 }
 
-function nextLevel() {
-    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
-    startGame();
-}
-
-function resetBoard() {
-    boardState = Array.from({ length: 7 }, () => Array(7).fill(0));
-    updateVisuals();
-}
-
-window.onload = startGame;
+window.addEventListener('DOMContentLoaded', init);
