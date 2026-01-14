@@ -49,11 +49,11 @@ body {
     justify-content: center; 
     cursor: pointer; 
     user-select: none;
-    position: relative; /* Nodig om symbolen binnenin te positioneren */
-    overflow: hidden;   /* Zorgt dat niets buiten het vakje steekt */
+    position: relative; /* Cruciaal: maakt de cel een anker voor het zwevende symbool */
+    overflow: hidden;
 }
 
-/* SYMBOLEN - Nu zwevend geplaatst zodat ze de cel niet uitrekken */
+/* SYMBOLEN: De 'lucht' is nu weg omdat ze de celmaat niet meer beïnvloeden */
 .queen, .cross { 
     position: absolute;
     top: 50%;
@@ -62,7 +62,10 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1;
-    pointer-events: none; /* Klikken gaat door het symbool naar de cel */
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .queen { 
