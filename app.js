@@ -1,9 +1,11 @@
 let currentLevelIndex = 0;
-let boardState = []; // 0: leeg, 1: kruis, 2: queen
+let boardState = []; 
 let startTime, timerInterval;
 
 function init() {
-    loadLevel(0);
+    if (typeof QUEENS_LEVELS !== 'undefined' && QUEENS_LEVELS.length > 0) {
+        loadLevel(0);
+    }
 }
 
 function loadLevel(index) {
@@ -13,7 +15,7 @@ function loadLevel(index) {
     
     document.getElementById('level-indicator').innerText = `Level: ${level.id}`;
     
-    const scores = JSON.parse(localStorage.getItem('q_best_final') || '{}');
+    const scores = JSON.parse(localStorage.getItem('q_best_7x7') || '{}');
     const best = scores[level.id];
     document.getElementById('best-time').innerText = best ? `Record: ${formatTime(best)}` : "Record: --:--";
 
@@ -26,12 +28,10 @@ function loadLevel(index) {
             cell.className = 'cell';
             cell.id = `cell-${r}-${c}`;
             cell.style.backgroundColor = level.regionColors[level.colorRegions[r][c]];
-            
             cell.onclick = () => {
                 boardState[r][c] = (boardState[r][c] + 1) % 3;
                 render();
             };
-            
             grid.appendChild(cell);
         }
     }
@@ -42,7 +42,6 @@ function loadLevel(index) {
 function render() {
     const level = QUEENS_LEVELS[currentLevelIndex];
     const queens = [];
-    
     for (let r = 0; r < 7; r++) {
         for (let c = 0; c < 7; c++) {
             if (boardState[r][c] === 2) queens.push({r, c, reg: level.colorRegions[r][c]});
@@ -62,47 +61,23 @@ function render() {
     for (let r = 0; r < 7; r++) {
         for (let c = 0; c < 7; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
-            cell.innerHTML = ''; 
-            
+            cell.innerHTML = '';
             if (boardState[r][c] === 1) {
-                const cross = document.createElement('span');
-                cross.className = 'cross';
-                cross.innerText = '✕';
-                cell.appendChild(cross);
+                cell.innerHTML = '<span class="cross">✕</span>';
             } else if (boardState[r][c] === 2) {
-                const queen = document.createElement('span');
-                queen.className = 'queen';
-                queen.innerText = '♛';
-                cell.appendChild(queen);
+                cell.innerHTML = '<span class="queen">♛</span>';
             }
-            
             cell.classList.toggle('error', boardState[r][c] === 2 && conflicts.has(`${r}-${c}`));
         }
     }
 
     if (queens.length === 7 && conflicts.size === 0) {
-        handleWin();
+        clearInterval(timerInterval);
+        setTimeout(() => { 
+            alert(`Gefeliciteerd! Tijd: ${document.getElementById('timer').innerText}`); 
+            nextLevel(); 
+        }, 100);
     }
-}
-
-function handleWin() {
-    clearInterval(timerInterval);
-    const timeStr = document.getElementById('timer').innerText;
-    const curSecs = Math.floor((Date.now() - startTime) / 1000);
-    const levelId = QUEENS_LEVELS[currentLevelIndex].id;
-    const scores = JSON.parse(localStorage.getItem('q_best_final') || '{}');
-    
-    let msg = `Gefeliciteerd! Tijd: ${timeStr}`;
-    if (!scores[levelId] || curSecs < scores[levelId]) {
-        msg += "\nNieuw record!";
-        scores[levelId] = curSecs;
-        localStorage.setItem('q_best_final', JSON.stringify(scores));
-    }
-    
-    setTimeout(() => { 
-        alert(msg); 
-        document.getElementById('best-time').innerText = `Record: ${formatTime(scores[levelId])}`;
-    }, 100);
 }
 
 function startTimer() {
@@ -123,8 +98,6 @@ function nextLevel() {
     loadLevel(currentLevelIndex);
 }
 
-function resetLevel() {
-    loadLevel(currentLevelIndex);
-}
+function resetLevel() { loadLevel(currentLevelIndex); }
 
 window.onload = init;
