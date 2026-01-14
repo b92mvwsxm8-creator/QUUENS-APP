@@ -1,109 +1,66 @@
-let currentPuzzle, queens = new Set(), marks = new Set(), timerInterval, startTime;
+async function getSolutions(board) {
+    const N = board.length;
+    const solutions = [];
+    const colorBoard = board.map(row => [...row]);
 
-function initGame() {
-    try {
-        const sizeSelect = document.getElementById('gridSize');
-        const size = parseInt(sizeSelect.value);
-        
-        // Filter alle beschikbare puzzels van deze maat uit puzzles.js
-        const availablePuzzles = SHAPES.filter(s => s.size === size);
-        
-        if (availablePuzzles.length > 0) {
-            // Kies een willekeurige variatie uit de lijst voor echte afwisseling
-            currentPuzzle = availablePuzzles[Math.floor(Math.random() * availablePuzzles.length)];
-        } else {
-            console.error("Geen puzzels gevonden voor maat:", size);
+    function isSafe(tempBoard, row, col) {
+        // 1 & 2. Check kolom (Python: Place Logica)
+        for (let i = 0; i < row; i++) {
+            if (tempBoard[i][col] === 1) return false;
+        }
+        // 3 & 4. Check de 4 diagonale hoeken (Python: Corner rules)
+        const toCheck = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+        for (let [dx, dy] of toCheck) {
+            let x = row + dx, y = col + dy;
+            if (x >= 0 && x < N && y >= 0 && y < N && tempBoard[x][y] === 1) return false;
+        }
+        return true;
+    }
+
+    async function backtrack(row, tempBoard) {
+        if (row === N) {
+            const solution = [];
+            for (let i = 0; i < N; i++) {
+                for (let j = 0; j < N; j++) {
+                    if (tempBoard[i][j] === 1) solution.push([i, j]);
+                }
+            }
+            // Check op unieke kleuren (LinkedIn Expert regel)
+            const colorSet = new Set(solution.map(([i, j]) => colorBoard[i][j]));
+            if (colorSet.size === N) {
+                solutions.push(solution);
+            }
             return;
         }
 
-        // Reset het bord en de timer
-        queens.clear();
-        marks.clear();
-        render();
-        startTimer();
-    } catch (e) {
-        console.error("Fout bij opstarten:", e);
-    }
-}
-
-function render() {
-    const b = document.getElementById("board");
-    const size = currentPuzzle.size;
-    b.innerHTML = "";
-    b.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-    b.style.gridTemplateRows = `repeat(${size}, 1fr)`;
-    
-    for(let r=0; r<size; r++) {
-        for(let c=0; c<size; c++) {
-            const cl = document.createElement("div");
-            cl.className = "cell"; 
-            cl.dataset.region = currentPuzzle.regions[r][c];
-            cl.dataset.row = r;
-            cl.dataset.col = c;
-            cl.onclick = () => handleCellClick(r, c);
-            b.appendChild(cl);
+        for (let col = 0; col < N; col++) {
+            if (isSafe(tempBoard, row, col)) {
+                tempBoard[row][col] = 1;
+                await backtrack(row + 1, tempBoard);
+                if (solutions.length > 1) return; // Stop direct als puzzel niet uniek is
+                tempBoard[row][col] = 0;
+            }
         }
     }
+
+    const initialBoard = Array.from({ length: N }, () => Array(N).fill(0));
+    await backtrack(0, initialBoard);
+    return solutions;
 }
 
-function handleCellClick(r, c) {
-    const k = `${r},${c}`;
-    if(!marks.has(k) && !queens.has(k)) { 
-        marks.add(k); 
-    } else if(marks.has(k)) { 
-        marks.delete(k); 
-        queens.add(k); 
-    } else { 
-        queens.delete(k); 
-    }
-    updateUI();
-}
+// Functie om een nieuwe gegarandeerd unieke puzzel te laden
+async function loadNewPuzzle() {
+    const puzzle = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    const solutions = await getSolutions(puzzle.regions);
 
-function updateUI() {
-    const size = currentPuzzle.size;
-    const qArr = Array.from(queens).map(k => k.split(',').map(Number));
-    let errors = false;
-    
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-        const r = parseInt(cell.dataset.row);
-        const c = parseInt(cell.dataset.col);
-        const k = `${r},${c}`;
-        
-        cell.classList.remove("has-queen","has-mark","bad");
-        
-        if(queens.has(k)) {
-            cell.classList.add("has-queen");
-            const conflict = qArr.some(([qr,qc]) => {
-                if(qr===r && qc===c) return false;
-                // De 4 LinkedIn regels: rij, kolom, zelfde kleur, of diagonaal rakend
-                return (qr===r || qc===c || 
-                        currentPuzzle.regions[qr][qc] === currentPuzzle.regions[r][c] || 
-                        (Math.abs(qr-r)<=1 && Math.abs(qc-c)<=1));
-            });
-            if(conflict) { cell.classList.add("bad"); errors = true; }
-        } else if(marks.has(k)) {
-            cell.classList.add("has-mark");
-        }
-    });
-    
-    // Controleer of de puzzel correct is opgelost
-    if(queens.size === size && !errors) {
-        clearInterval(timerInterval);
-        setTimeout(() => alert("Gefeliciteerd! Je hebt deze variatie opgelost."), 100);
+    if (solutions.length === 1) {
+        console.log("Puzzel gevalideerd: Unieke oplossing gevonden.");
+        renderBoard(puzzle);
+    } else {
+        console.error("Fout: Puzzel is niet uniek of onmogelijk. Probeer een andere.");
+        // Hier zou je automatisch een volgende SHAPE kunnen proberen
     }
 }
 
-function startTimer() { 
-    if(timerInterval) clearInterval(timerInterval); 
-    startTime = Date.now(); 
-    timerInterval = setInterval(() => { 
-        const elapsed = Math.floor((Date.now()-startTime)/1000);
-        const min = Math.floor(elapsed / 60).toString().padStart(2, '0');
-        const sec = (elapsed % 60).toString().padStart(2, '0');
-        document.getElementById("timer").textContent = `${min}:${sec}`;
-    }, 1000); 
-}
-
-// Start het spel zodra de pagina geladen is
-document.addEventListener("DOMContentLoaded", initGame);
+// Initialisatie
+document.addEventListener('DOMContentLoaded', loadNewPuzzle);
