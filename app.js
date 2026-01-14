@@ -1,66 +1,77 @@
-async function getSolutions(board) {
-    const N = board.length;
-    const solutions = [];
-    const colorBoard = board.map(row => [...row]);
+let currentLevelIndex = 0;
+let boardState = []; // 0=leeg, 1=kruisje, 2=koningin
 
-    function isSafe(tempBoard, row, col) {
-        // 1 & 2. Check kolom (Python: Place Logica)
-        for (let i = 0; i < row; i++) {
-            if (tempBoard[i][col] === 1) return false;
-        }
-        // 3 & 4. Check de 4 diagonale hoeken (Python: Corner rules)
-        const toCheck = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
-        for (let [dx, dy] of toCheck) {
-            let x = row + dx, y = col + dy;
-            if (x >= 0 && x < N && y >= 0 && y < N && tempBoard[x][y] === 1) return false;
-        }
-        return true;
-    }
-
-    async function backtrack(row, tempBoard) {
-        if (row === N) {
-            const solution = [];
-            for (let i = 0; i < N; i++) {
-                for (let j = 0; j < N; j++) {
-                    if (tempBoard[i][j] === 1) solution.push([i, j]);
-                }
-            }
-            // Check op unieke kleuren (LinkedIn Expert regel)
-            const colorSet = new Set(solution.map(([i, j]) => colorBoard[i][j]));
-            if (colorSet.size === N) {
-                solutions.push(solution);
-            }
-            return;
-        }
-
-        for (let col = 0; col < N; col++) {
-            if (isSafe(tempBoard, row, col)) {
-                tempBoard[row][col] = 1;
-                await backtrack(row + 1, tempBoard);
-                if (solutions.length > 1) return; // Stop direct als puzzel niet uniek is
-                tempBoard[row][col] = 0;
-            }
-        }
-    }
-
-    const initialBoard = Array.from({ length: N }, () => Array(N).fill(0));
-    await backtrack(0, initialBoard);
-    return solutions;
+function startGame() {
+    const level = QUEENS_LEVELS[currentLevelIndex];
+    boardState = Array.from({ length: 7 }, () => Array(7).fill(0));
+    renderBoard(level);
 }
 
-// Functie om een nieuwe gegarandeerd unieke puzzel te laden
-async function loadNewPuzzle() {
-    const puzzle = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-    const solutions = await getSolutions(puzzle.regions);
+function renderBoard(level) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    
+    level.colorRegions.forEach((row, r) => {
+        row.forEach((region, c) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-${r}-${c}`;
+            cell.style.backgroundColor = level.regionColors[region];
+            
+            // IPHONE KLIK: Roteer status
+            cell.onclick = () => {
+                boardState[r][c] = (boardState[r][c] + 1) % 3;
+                updateVisuals();
+                validateBoard();
+            };
+            
+            grid.appendChild(cell);
+        });
+    });
+    updateVisuals();
+}
 
-    if (solutions.length === 1) {
-        console.log("Puzzel gevalideerd: Unieke oplossing gevonden.");
-        renderBoard(puzzle);
-    } else {
-        console.error("Fout: Puzzel is niet uniek of onmogelijk. Probeer een andere.");
-        // Hier zou je automatisch een volgende SHAPE kunnen proberen
+function updateVisuals() {
+    for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            cell.classList.remove('queen', 'mark', 'error');
+            if (boardState[r][c] === 1) cell.classList.add('mark');
+            if (boardState[r][c] === 2) cell.classList.add('queen');
+        }
     }
 }
 
-// Initialisatie
-document.addEventListener('DOMContentLoaded', loadNewPuzzle);
+function validateBoard() {
+    const level = QUEENS_LEVELS[currentLevelIndex];
+    const queens = [];
+    for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+            if (boardState[r][c] === 2) queens.push({r, c, region: level.colorRegions[r][c]});
+        }
+    }
+
+    queens.forEach((q1, i) => {
+        queens.forEach((q2, j) => {
+            if (i === j) return;
+            const conflict = (q1.r === q2.r) || (q1.c === q2.c) || (q1.region === q2.region) ||
+                             (Math.abs(q1.r - q2.r) === 1 && Math.abs(q1.c - q2.c) === 1);
+            if (conflict) {
+                document.getElementById(`cell-${q1.r}-${q1.c}`).classList.add('error');
+                document.getElementById(`cell-${q2.r}-${q2.c}`).classList.add('error');
+            }
+        });
+    });
+}
+
+function nextLevel() {
+    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
+    startGame();
+}
+
+function resetBoard() {
+    boardState = Array.from({ length: 7 }, () => Array(7).fill(0));
+    updateVisuals();
+}
+
+window.onload = startGame;
