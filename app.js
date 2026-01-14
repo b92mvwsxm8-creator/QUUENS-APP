@@ -4,16 +4,20 @@ function initGame() {
     try {
         const sizeSelect = document.getElementById('gridSize');
         const size = parseInt(sizeSelect.value);
-        queens.clear(); 
-        marks.clear();
         
-        const available = SHAPES.filter(s => s.size === size);
-        if (available.length > 0) {
-            currentPuzzle = available[Math.floor(Math.random() * available.length)];
+        // Filter alle beschikbare puzzels van deze maat
+        const availablePuzzles = SHAPES.filter(s => s.size === size);
+        
+        if (availablePuzzles.length > 0) {
+            // Kies een willekeurige variatie uit de lijst
+            currentPuzzle = availablePuzzles[Math.floor(Math.random() * availablePuzzles.length)];
         } else {
-            console.error("Geen puzzel gevonden voor maat:", size);
+            console.error("Geen puzzels gevonden voor maat:", size);
             return;
         }
+
+        queens.clear();
+        marks.clear();
         render();
         startTimer();
     } catch (e) {
@@ -71,7 +75,6 @@ function updateUI() {
             cell.classList.add("has-queen");
             const conflict = qArr.some(([qr,qc]) => {
                 if(qr===r && qc===c) return false;
-                // Check rij, kolom, regio en aangrenzend (diagonaal)
                 return (qr===r || qc===c || 
                         currentPuzzle.regions[qr][qc] === currentPuzzle.regions[r][c] || 
                         (Math.abs(qr-r)<=1 && Math.abs(qc-c)<=1));
@@ -84,7 +87,7 @@ function updateUI() {
     
     if(queens.size === size && !errors) {
         clearInterval(timerInterval);
-        setTimeout(() => alert("Gefeliciteerd! Je hebt de Queens puzzel opgelost."), 100);
+        setTimeout(() => alert("Gefeliciteerd! Je hebt deze variatie opgelost."), 100);
     }
 }
 
