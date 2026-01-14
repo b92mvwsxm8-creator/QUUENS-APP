@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Expert</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Queens Expert 7x7</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header style="text-align: center; margin-top: 10px;">
-        <h1>Queens Expert</h1>
-    </header>
-    <div class="controls">
-        <select id="gridSize" onchange="initGame()">
-            <option value="7" selected>7x7</option>
-            <option value="8">8x8</option>
-            <option value="9">9x9</option>
-            <option value="10">10x10</option>
-            <option value="11">11x11</option>
-        </select>
-        <button onclick="initGame()">Nieuwe Puzzel</button>
-        <div class="timer-box">Tijd: <span id="timer">00:00</span></div>
+
+    <div id="game-container">
+        <h1>Queens Expert 7x7</h1>
+        
+        <div id="grid" class="grid"></div>
+
+        <div class="controls">
+            <button onclick="resetBoard()">Huidige resetten</button>
+            <button onclick="nextLevel()">Volgend level</button>
+        </div>
+        
+        <p id="status-message">Tik op een vakje: Leeg -> Kruisje -> Koningin</p>
     </div>
-    <div id="board-container"><div id="board"></div></div>
-    <script src="puzzles.js"></script>
+
+    <script src="levels.js"></script>
     <script src="app.js"></script>
+
 </body>
 </html>
