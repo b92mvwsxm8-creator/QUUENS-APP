@@ -5,17 +5,18 @@ function initGame() {
         const sizeSelect = document.getElementById('gridSize');
         const size = parseInt(sizeSelect.value);
         
-        // Filter alle beschikbare puzzels van deze maat
+        // Filter alle beschikbare puzzels van deze maat uit puzzles.js
         const availablePuzzles = SHAPES.filter(s => s.size === size);
         
         if (availablePuzzles.length > 0) {
-            // Kies een willekeurige variatie uit de lijst
+            // Kies een willekeurige variatie uit de lijst voor echte afwisseling
             currentPuzzle = availablePuzzles[Math.floor(Math.random() * availablePuzzles.length)];
         } else {
             console.error("Geen puzzels gevonden voor maat:", size);
             return;
         }
 
+        // Reset het bord en de timer
         queens.clear();
         marks.clear();
         render();
@@ -75,6 +76,7 @@ function updateUI() {
             cell.classList.add("has-queen");
             const conflict = qArr.some(([qr,qc]) => {
                 if(qr===r && qc===c) return false;
+                // De 4 LinkedIn regels: rij, kolom, zelfde kleur, of diagonaal rakend
                 return (qr===r || qc===c || 
                         currentPuzzle.regions[qr][qc] === currentPuzzle.regions[r][c] || 
                         (Math.abs(qr-r)<=1 && Math.abs(qc-c)<=1));
@@ -85,6 +87,7 @@ function updateUI() {
         }
     });
     
+    // Controleer of de puzzel correct is opgelost
     if(queens.size === size && !errors) {
         clearInterval(timerInterval);
         setTimeout(() => alert("Gefeliciteerd! Je hebt deze variatie opgelost."), 100);
@@ -102,4 +105,5 @@ function startTimer() {
     }, 1000); 
 }
 
+// Start het spel zodra de pagina geladen is
 document.addEventListener("DOMContentLoaded", initGame);
