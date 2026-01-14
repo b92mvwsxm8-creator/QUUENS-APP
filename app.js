@@ -25,9 +25,9 @@ function render() {
         cl.dataset.region = currentPuzzle.regions[r][c];
         cl.onclick = () => {
             const k=`${r},${c}`;
-            if(!marks.has(k) && !queens.has(k)) marks.add(k);
+            if(!marks.has(k) && !queens.has(k)) { marks.add(k); }
             else if(marks.has(k)) { marks.delete(k); queens.add(k); }
-            else queens.delete(k);
+            else { queens.delete(k); }
             updateUI();
         };
         b.appendChild(cl);
@@ -36,14 +36,17 @@ function render() {
 
 function updateUI() {
     const size = currentPuzzle.size;
-    const q = Array.from(queens).map(k => k.split(',').map(Number));
+    const qArr = Array.from(queens).map(k => k.split(',').map(Number));
     let errors = false;
     document.querySelectorAll(".cell").forEach((cell, i) => {
         const r=Math.floor(i/size), c=i%size, k=`${r},${c}`;
         cell.classList.remove("has-queen","has-mark","bad");
         if(queens.has(k)) {
             cell.classList.add("has-queen");
-            const conflict = q.some(([qr,qc]) => (qr===r && qc===c) ? false : (qr===r || qc===c || currentPuzzle.regions[qr][qc]===currentPuzzle.regions[r][c] || (Math.abs(qr-r)<=1 && Math.abs(qc-c)<=1)));
+            const conflict = qArr.some(([qr,qc]) => {
+                if(qr===r && qc===c) return false;
+                return (qr===r || qc===c || currentPuzzle.regions[qr][qc]===currentPuzzle.regions[r][c] || (Math.abs(qr-r)<=1 && Math.abs(qc-c)<=1));
+            });
             if(conflict) { cell.classList.add("bad"); errors = true; }
         } else if(marks.has(k)) cell.classList.add("has-mark");
     });
