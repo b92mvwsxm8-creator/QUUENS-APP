@@ -1,4 +1,4 @@
-// Kleuren exact zoals in jouw Word-document 'queenscodes7x7.docx'
+// Kleurdefinities exact uit jouw document 'queenscodes7x7.docx'
 const lightWisteria = "#BBA3E2";
 const chardonnay = "#FFC992";
 const anakiwa = "#96BEFF";
@@ -7,14 +7,14 @@ const altoMain = "#DFDFDF";
 const bittersweet = "#FF7B60";
 const saharaSand = "#E6F388";
 const lightOrchid = "#DFA0BF";
-const macNCheese = "#FFBD88";
+const nomad = "#B9B29E";
+const lavenderRose = "#FE93F1";
+const turquoiseBlue = "#55EBE2";
 const coldPurple = "#ABAAD4";
 const halfBaked = "#95CBCF";
 const malibu = "#7EC8FF";
-const nomad = "#B9B29E";
+const macNCheese = "#FFBD88";
 const manz = "#E6F388";
-const lavenderRose = "#FE93F1";
-const turquoiseBlue = "#55EBE2";
 const tallow = "#A8A011";
 
 const QUEENS_LEVELS = [
