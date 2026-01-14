@@ -2,23 +2,22 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Queens Expert 7x7</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queens Puzzle - 7x7</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="game-container">
-        <h1>Queens Expert 7x7</h1>
+    <div class="game-container">
+        <h1>Queens Puzzle</h1>
+        <div id="level-indicator">Level: 101</div>
         
-        <div id="grid" class="grid"></div>
+        <div id="grid"></div>
 
         <div class="controls">
-            <button onclick="resetBoard()">Huidige resetten</button>
-            <button onclick="nextLevel()">Volgend level</button>
+            <button onclick="resetLevel()">Reset</button>
+            <button onclick="nextLevel()">Volgend Level</button>
         </div>
-        
-        <p id="status-message">Tik op een vakje: Leeg -> Kruisje -> Koningin</p>
     </div>
 
     <script src="levels.js"></script>
