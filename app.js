@@ -62,10 +62,17 @@ function render() {
         for (let c = 0; c < 7; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
             cell.innerHTML = '';
+            
             if (boardState[r][c] === 1) {
-                cell.innerHTML = '<span class="cross">✕</span>';
+                const cross = document.createElement('span');
+                cross.className = 'cross';
+                cross.innerText = '✕';
+                cell.appendChild(cross);
             } else if (boardState[r][c] === 2) {
-                cell.innerHTML = '<span class="queen">♛</span>';
+                const queen = document.createElement('span');
+                queen.className = 'queen';
+                queen.innerText = '♛';
+                cell.appendChild(queen);
             }
             cell.classList.toggle('error', boardState[r][c] === 2 && conflicts.has(`${r}-${c}`));
         }
