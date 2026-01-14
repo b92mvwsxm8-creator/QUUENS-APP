@@ -30,7 +30,6 @@ body {
 #best-time { font-size: 11px; color: #888; margin-top: 2px; }
 #level-indicator { font-weight: bold; font-size: 16px; }
 
-/* HET GRID */
 #grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -42,34 +41,40 @@ body {
     margin: 10px auto;
 }
 
-/* DE FIX: VIERKANTE VAKJES */
 .cell { 
     width: 100%; 
-    aspect-ratio: 1 / 1; /* Dwingt een perfect vierkant af per vakje */
+    aspect-ratio: 1 / 1; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
     cursor: pointer; 
     user-select: none;
-    /* De achtergrondkleur wordt via JS ingesteld, maar we zorgen dat de cel de ruimte vult */
+    position: relative; /* Nodig om symbolen binnenin te positioneren */
+    overflow: hidden;   /* Zorgt dat niets buiten het vakje steekt */
 }
 
-/* SYMBOLEN */
+/* SYMBOLEN - Nu zwevend geplaatst zodat ze de cel niet uitrekken */
+.queen, .cross { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    pointer-events: none; /* Klikken gaat door het symbool naar de cel */
+}
+
 .queen { 
-    font-size: 30px; 
+    font-size: 32px; 
     color: #000; 
-    line-height: 0; 
-    display: block;
 } 
 
 .cross { 
-    font-size: 14px; 
+    font-size: 16px; 
     color: rgba(0,0,0,0.3); 
-    line-height: 0; 
-    display: block;
 }
 
-/* FOUTMELDING */
 .cell.error { 
     background-color: #ff4d4d !important; 
 }
@@ -78,7 +83,6 @@ body {
     color: white; 
 }
 
-/* BEDIENING */
 .controls { 
     margin-top: 20px; 
     display: flex; 
