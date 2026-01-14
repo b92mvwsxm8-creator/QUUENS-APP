@@ -9,8 +9,6 @@ function init() {
 function loadLevel(index) {
     currentLevelIndex = index;
     const level = QUEENS_LEVELS[currentLevelIndex];
-    
-    // Telt de rijen uit jouw document data
     const size = level.colorRegions.length; 
     
     boardState = Array.from({ length: size }, () => Array(size).fill(0));
@@ -18,6 +16,7 @@ function loadLevel(index) {
     
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
+    grid.style.display = 'grid';
     grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
     for (let r = 0; r < size; r++) {
@@ -40,11 +39,20 @@ function renderCells(size) {
     for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
-            cell.innerHTML = ''; // Cruciaal: wist oude iconen
+            cell.innerHTML = ''; 
             if (boardState[r][c] === 1) cell.innerHTML = '✕';
             if (boardState[r][c] === 2) cell.innerHTML = '♛';
         }
     }
+}
+
+function nextLevel() {
+    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
+    loadLevel(currentLevelIndex);
+}
+
+function resetLevel() {
+    loadLevel(currentLevelIndex);
 }
 
 window.onload = init;
