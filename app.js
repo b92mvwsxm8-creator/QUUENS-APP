@@ -1,7 +1,6 @@
 let currentLevelIndex = 0;
-let boardState = [];
-let startTime;
-let timerInterval;
+let boardState = []; // 0: leeg, 1: kruis, 2: queen
+let startTime, timerInterval;
 
 function init() {
     loadLevel(0);
@@ -10,126 +9,100 @@ function init() {
 function loadLevel(index) {
     currentLevelIndex = index;
     const level = QUEENS_LEVELS[currentLevelIndex];
-    const size = level.colorRegions.length;
-    boardState = Array.from({ length: size }, () => Array(size).fill(0));
+    boardState = Array.from({ length: 7 }, () => Array(7).fill(0));
     
     document.getElementById('level-indicator').innerText = `Level: ${level.id}`;
+    
+    const scores = JSON.parse(localStorage.getItem('q_best_final') || '{}');
+    const best = scores[level.id];
+    document.getElementById('best-time').innerText = best ? `Record: ${formatTime(best)}` : "Record: --:--";
+
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
-    grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
-    for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
+    for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.id = `cell-${r}-${c}`;
             cell.style.backgroundColor = level.regionColors[level.colorRegions[r][c]];
-            cell.onclick = () => handleCellClick(r, c, size);
+            
+            cell.onclick = () => {
+                boardState[r][c] = (boardState[r][c] + 1) % 3;
+                render();
+            };
+            
             grid.appendChild(cell);
         }
     }
-    updateBestTimeDisplay(level.id);
     startTimer();
-    renderCells(size);
+    render();
 }
 
-function handleCellClick(r, c, size) {
-    boardState[r][c] = (boardState[r][c] + 1) % 3;
-    renderCells(size);
-    checkWin(size);
-}
-
-function renderCells(size) {
+function render() {
     const level = QUEENS_LEVELS[currentLevelIndex];
-    const conflicts = findConflicts(size, level);
-
-    for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
-            const cell = document.getElementById(`cell-${r}-${c}`);
-            cell.innerHTML = '';
-            cell.classList.remove('error');
-            if (boardState[r][c] === 1) cell.innerHTML = '<span class="cross">✕</span>';
-            if (boardState[r][c] === 2) {
-                cell.innerHTML = '<span class="queen">♛</span>';
-                if (conflicts.has(`${r}-${c}`)) cell.classList.add('error');
-            }
-        }
-    }
-}
-
-function findConflicts(size, level) {
     const queens = [];
-    const conflicts = new Set();
-    for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
+    
+    for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
             if (boardState[r][c] === 2) queens.push({r, c, reg: level.colorRegions[r][c]});
         }
     }
-    queens.forEach((q1, i) => {
-        queens.forEach((q2, j) => {
-            if (i === j) return;
-            const sameRow = q1.r === q2.r;
-            const sameCol = q1.c === q2.c;
-            const sameReg = q1.reg === q2.reg;
-            const adj = Math.abs(q1.r - q2.r) <= 1 && Math.abs(q1.c - q2.c) <= 1;
-            if (sameRow || sameCol || sameReg || adj) {
+
+    const conflicts = new Set();
+    queens.forEach(q1 => {
+        queens.forEach(q2 => {
+            if (q1 === q2) return;
+            if (q1.r === q2.r || q1.c === q2.c || q1.reg === q2.reg || (Math.abs(q1.r-q2.r)<=1 && Math.abs(q1.c-q2.c)<=1)) {
                 conflicts.add(`${q1.r}-${q1.c}`);
-                conflicts.add(`${q2.r}-${q2.c}`);
             }
         });
     });
-    return conflicts;
-}
 
-function checkWin(size) {
-    const level = QUEENS_LEVELS[currentLevelIndex];
-    let queenCount = 0;
-    for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) if (boardState[r][c] === 2) queenCount++;
-    }
-
-    if (queenCount === size && findConflicts(size, level).size === 0) {
-        clearInterval(timerInterval);
-        const timeStr = document.getElementById('timer').innerText;
-        const currentTime = timeToSeconds(timeStr);
-        const bestTime = getBestTime(level.id);
-        
-        let msg = `Gefeliciteerd! Level ${level.id} voltooid in ${timeStr}.`;
-        if (!bestTime || currentTime < bestTime) {
-            msg += "\nNieuw record verbroken!";
-            saveBestTime(level.id, currentTime);
+    for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            cell.innerHTML = ''; 
+            
+            if (boardState[r][c] === 1) {
+                const cross = document.createElement('span');
+                cross.className = 'cross';
+                cross.innerText = '✕';
+                cell.appendChild(cross);
+            } else if (boardState[r][c] === 2) {
+                const queen = document.createElement('span');
+                queen.className = 'queen';
+                queen.innerText = '♛';
+                cell.appendChild(queen);
+            }
+            
+            cell.classList.toggle('error', boardState[r][c] === 2 && conflicts.has(`${r}-${c}`));
         }
-        alert(msg);
-        updateBestTimeDisplay(level.id);
+    }
+
+    if (queens.length === 7 && conflicts.size === 0) {
+        handleWin();
     }
 }
 
-function timeToSeconds(str) {
-    const p = str.split(':');
-    return parseInt(p[0]) * 60 + parseInt(p[1]);
-}
-
-function getBestTime(id) {
-    const scores = JSON.parse(localStorage.getItem('queens_best_times') || '{}');
-    return scores[id];
-}
-
-function saveBestTime(id, secs) {
-    const scores = JSON.parse(localStorage.getItem('queens_best_times') || '{}');
-    scores[id] = secs;
-    localStorage.setItem('queens_best_times', JSON.stringify(scores));
-}
-
-function updateBestTimeDisplay(id) {
-    const best = getBestTime(id);
-    const display = document.getElementById('best-time');
-    if (best) {
-        const m = String(Math.floor(best / 60)).padStart(2, '0');
-        const s = String(best % 60).padStart(2, '0');
-        display.innerText = `Record: ${m}:${s}`;
-    } else {
-        display.innerText = `Record: --:--`;
+function handleWin() {
+    clearInterval(timerInterval);
+    const timeStr = document.getElementById('timer').innerText;
+    const curSecs = Math.floor((Date.now() - startTime) / 1000);
+    const levelId = QUEENS_LEVELS[currentLevelIndex].id;
+    const scores = JSON.parse(localStorage.getItem('q_best_final') || '{}');
+    
+    let msg = `Gefeliciteerd! Tijd: ${timeStr}`;
+    if (!scores[levelId] || curSecs < scores[levelId]) {
+        msg += "\nNieuw record!";
+        scores[levelId] = curSecs;
+        localStorage.setItem('q_best_final', JSON.stringify(scores));
     }
+    
+    setTimeout(() => { 
+        alert(msg); 
+        document.getElementById('best-time').innerText = `Record: ${formatTime(scores[levelId])}`;
+    }, 100);
 }
 
 function startTimer() {
@@ -137,12 +110,21 @@ function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
-        const s = String(elapsed % 60).padStart(2, '0');
-        document.getElementById('timer').innerText = `${m}:${s}`;
+        document.getElementById('timer').innerText = formatTime(elapsed);
     }, 1000);
 }
 
-function nextLevel() { loadLevel((currentLevelIndex + 1) % QUEENS_LEVELS.length); }
-function resetLevel() { loadLevel(currentLevelIndex); }
+function formatTime(s) {
+    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+function nextLevel() {
+    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
+    loadLevel(currentLevelIndex);
+}
+
+function resetLevel() {
+    loadLevel(currentLevelIndex);
+}
+
 window.onload = init;
