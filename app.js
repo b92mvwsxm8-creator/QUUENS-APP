@@ -1,33 +1,42 @@
 let currentLevelIndex = 0;
-let boardState = [];
+let boardState = []; 
+let startTime;
+let timerInterval;
 
 function init() {
-    if (typeof QUEENS_LEVELS === 'undefined') {
-        console.error("Data niet gevonden");
-        return;
-    }
+    if (typeof QUEENS_LEVELS === 'undefined') return;
     loadLevel(0);
+}
+
+function startTimer() {
+    startTime = Date.now();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const secs = String(elapsed % 60).padStart(2, '0');
+        const t = document.getElementById('timer');
+        if (t) t.innerText = `${mins}:${secs}`;
+    }, 1000);
 }
 
 function loadLevel(index) {
     currentLevelIndex = index;
     const level = QUEENS_LEVELS[currentLevelIndex];
+    // Maakt een bord op basis van de ECHTE grootte (bijv. 8x8)
     boardState = Array.from({ length: level.size }, () => Array(level.size).fill(0));
-    
-    const indicator = document.getElementById('level-indicator');
-    if (indicator) indicator.innerText = `Level: ${level.id}`;
-    
+    document.getElementById('level-indicator').innerText = `Level: ${level.id}`;
     renderBoard();
+    startTimer();
 }
 
 function renderBoard() {
     const grid = document.getElementById('grid');
-    if (!grid) return;
-    
     const level = QUEENS_LEVELS[currentLevelIndex];
     grid.innerHTML = '';
     grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = `repeat(${level.size}, 50px)`;
+    // Dynamisch raster op basis van level.size
+    grid.style.gridTemplateColumns = `repeat(${level.size}, 1fr)`;
 
     for (let r = 0; r < level.size; r++) {
         for (let c = 0; c < level.size; c++) {
@@ -35,17 +44,15 @@ function renderBoard() {
             cell.className = 'cell';
             cell.id = `cell-${r}-${c}`;
             cell.style.backgroundColor = level.regionColors[level.colorRegions[r][c]];
-            cell.onclick = () => toggleCell(r, c);
+            cell.onclick = () => {
+                boardState[r][c] = (boardState[r][c] + 1) % 3;
+                updateDisplay();
+                validate();
+            };
             grid.appendChild(cell);
         }
     }
     updateDisplay();
-}
-
-function toggleCell(r, c) {
-    boardState[r][c] = (boardState[r][c] + 1) % 3;
-    updateDisplay();
-    validate();
 }
 
 function updateDisplay() {
@@ -53,11 +60,16 @@ function updateDisplay() {
     for (let r = 0; r < level.size; r++) {
         for (let c = 0; c < level.size; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
-            if (!cell) continue;
+            cell.innerText = ''; // Forceert een leeg vakje voor we tekenen
             cell.classList.remove('queen', 'mark', 'error');
-            cell.innerHTML = '';
-            if (boardState[r][c] === 1) { cell.innerHTML = '✕'; cell.classList.add('mark'); }
-            if (boardState[r][c] === 2) { cell.innerHTML = '👑'; cell.classList.add('queen'); }
+            
+            if (boardState[r][c] === 1) {
+                cell.innerText = '✕';
+                cell.classList.add('mark');
+            } else if (boardState[r][c] === 2) {
+                cell.innerText = '♛'; 
+                cell.classList.add('queen');
+            }
         }
     }
 }
@@ -65,33 +77,23 @@ function updateDisplay() {
 function validate() {
     const level = QUEENS_LEVELS[currentLevelIndex];
     const queens = [];
-    document.querySelectorAll('.cell').forEach(el => el.classList.remove('error'));
-
     for (let r = 0; r < level.size; r++) {
         for (let c = 0; c < level.size; c++) {
             if (boardState[r][c] === 2) queens.push({r, c, reg: level.colorRegions[r][c]});
         }
     }
-
     queens.forEach((q1, i) => {
         queens.forEach((q2, j) => {
             if (i === j) return;
             const conflict = q1.r === q2.r || q1.c === q2.c || q1.reg === q2.reg || (Math.abs(q1.r - q2.r) <= 1 && Math.abs(q1.c - q2.c) <= 1);
             if (conflict) {
                 document.getElementById(`cell-${q1.r}-${q1.c}`).classList.add('error');
-                document.getElementById(`cell-${q2.r}-${q2.c}`).classList.add('error');
             }
         });
     });
 }
 
-function nextLevel() {
-    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
-    loadLevel(currentLevelIndex);
-}
-
-function resetLevel() {
-    loadLevel(currentLevelIndex);
-}
+function nextLevel() { loadLevel((currentLevelIndex + 1) % QUEENS_LEVELS.length); }
+function resetLevel() { loadLevel(currentLevelIndex); }
 
 window.onload = init;
