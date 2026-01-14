@@ -9,7 +9,10 @@ body {
     touch-action: manipulation;
 }
 
-.game-container { width: 100%; max-width: 450px; }
+.game-container { 
+    width: 100%; 
+    max-width: 450px; 
+}
 
 .status-bar { 
     display: flex; 
@@ -29,10 +32,11 @@ body {
 #grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: 0; /* Voorkomt dat symbolen de rijhoogte bepalen */
+    grid-template-rows: repeat(7, 1fr);
     gap: 1px;
     background-color: #333;
     width: 100%;
+    aspect-ratio: 1 / 1; /* Dwingt het grid tot een perfect vierkant */
     border: 2px solid #333;
     box-sizing: border-box;
     margin: 10px auto;
@@ -40,20 +44,22 @@ body {
 
 .cell { 
     width: 100%; 
-    padding-bottom: 100%; /* Maakt het vakje exact vierkant */
-    height: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative; 
     cursor: pointer; 
     user-select: none;
+    background-color: white; /* Basis kleur */
 }
 
 .queen, .cross { 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    line-height: 0;
     pointer-events: none;
+    line-height: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .queen { font-size: 32px; color: #000; }
