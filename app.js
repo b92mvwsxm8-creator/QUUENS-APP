@@ -1,92 +1,145 @@
-// Volledige kleurlijst zoals door jou aangeleverd
-const PALETTE = {
-    altoMain: "#DFDFDF", anakiwa: "#96BEFF", atomicTangerine: "#FAA889",
-    bittersweet: "#FF7B60", celadon: "#B3DFA0", chardonnay: "#FFC992",
-    emerald: "#5BBA6F", halfBaked: "#95CBCF", lavenderRose: "#FE93F1",
-    lightGreen: "#91F5AD", lightOrchid: "#DFA0BF", lightWisteria: "#BBA3E2",
-    nomad: "#B9B29E", periwinkle: "#C9C9EE", saharaSand: "#E6F388",
-    turquoiseBlue: "#55EBE2", white: "#FFFFFF"
-};
+/**
+ * Queens Game Logic
+ * Gekoppeld aan QUEENS_LEVELS uit levels.js
+ */
 
 let currentLevelIndex = 0;
-let boardState = []; 
+let boardState = []; // 0 = leeg, 1 = markering (X), 2 = koningin
 
+// 1. Initialisatie
 function init() {
-    if (typeof QUEENS_LEVELS === 'undefined') return;
+    console.log("Spel wordt gestart...");
+    if (typeof QUEENS_LEVELS === 'undefined' || QUEENS_LEVELS.length === 0) {
+        alert("Fout: levels.js is niet geladen of QUEENS_LEVELS ontbreekt.");
+        return;
+    }
     loadLevel(0);
 }
 
+// 2. Level Laden
 function loadLevel(index) {
     currentLevelIndex = index;
-    const level = QUEENS_LEVELS[index];
-    boardState = Array.from({ length: level.size }, () => Array(level.size).fill(0));
+    const level = QUEENS_LEVELS[currentLevelIndex];
+    const size = level.size;
+
+    // Maak een leeg bord (2D array vol nullen)
+    boardState = Array.from({ length: size }, () => Array(size).fill(0));
+    
+    // Update de UI
+    const levelIndicator = document.getElementById('level-indicator');
+    if (levelIndicator) levelIndicator.innerText = `Level: ${level.id}`;
+
     renderBoard();
 }
 
+// 3. Het grid tekenen
 function renderBoard() {
     const grid = document.getElementById('grid');
-    const level = QUEENS_LEVELS[currentLevelIndex];
-    grid.innerHTML = '';
-    grid.style.gridTemplateColumns = `repeat(${level.size}, 1fr)`;
+    if (!grid) return;
 
-    for (let r = 0; r < level.size; r++) {
-        for (let c = 0; c < level.size; c++) {
+    const level = QUEENS_LEVELS[currentLevelIndex];
+    const size = level.size;
+
+    grid.innerHTML = '';
+    // Stel CSS grid in op basis van level grootte
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = `repeat(${size}, 50px)`;
+    grid.style.width = `${size * 50}px`;
+
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.id = `cell-${r}-${c}`;
             
-            // Gebruik kleur uit level of fallback naar palette
-            const region = level.colorRegions[r][c];
-            cell.style.backgroundColor = level.regionColors[region] || PALETTE.altoMain;
-            
-            // De herstelde 3-staps klik voor iPhone
+            // Kleur de cel op basis van de regio
+            const regionId = level.colorRegions[r][c];
+            const color = level.regionColors[regionId];
+            cell.style.backgroundColor = color;
+
+            // Klik-actie: verander staat (leeg -> X -> Koningin -> leeg)
             cell.onclick = (e) => {
                 e.preventDefault();
-                boardState[r][c] = (boardState[r][c] + 1) % 3;
-                updateDisplay();
-                validate();
+                toggleCell(r, c);
             };
+
             grid.appendChild(cell);
         }
     }
     updateDisplay();
 }
 
+// 4. Cel status wisselen
+function toggleCell(r, c) {
+    boardState[r][c] = (boardState[r][c] + 1) % 3;
+    updateDisplay();
+    validate();
+}
+
+// 5. Visuele update van iconen
 function updateDisplay() {
-    for (let r = 0; r < boardState.length; r++) {
-        for (let c = 0; c < boardState[r].length; c++) {
+    const size = QUEENS_LEVELS[currentLevelIndex].size;
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
             const cell = document.getElementById(`cell-${r}-${c}`);
+            if (!cell) continue;
+
+            // Verwijder oude klassen
             cell.classList.remove('queen', 'mark', 'error');
-            if (boardState[r][c] === 1) cell.innerHTML = '✕'; 
-            else if (boardState[r][c] === 2) cell.innerHTML = '♛';
-            else cell.innerHTML = '';
+            cell.innerHTML = ''; // Maak leeg
+
+            if (boardState[r][c] === 1) {
+                cell.classList.add('mark');
+                cell.innerHTML = '✕';
+            } else if (boardState[r][c] === 2) {
+                cell.classList.add('queen');
+                cell.innerHTML = '👑';
+            }
         }
     }
 }
 
+// 6. Validatie (Check op regels)
 function validate() {
     const level = QUEENS_LEVELS[currentLevelIndex];
+    const size = level.size;
     const queens = [];
-    // Reset alle errors eerst
-    document.querySelectorAll('.cell').forEach(c => c.classList.remove('error'));
 
-    for (let r = 0; r < level.size; r++) {
-        for (let c = 0; c < level.size; c++) {
-            if (boardState[r][c] === 2) queens.push({ r, c, reg: level.colorRegions[r][c] });
+    // Verzamel alle geplaatste koninginnen
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+            if (boardState[r][c] === 2) {
+                queens.push({ r, c, reg: level.colorRegions[r][c] });
+            }
         }
     }
 
+    // Check elke koningin tegen de anderen
     queens.forEach((q1, i) => {
         queens.forEach((q2, j) => {
             if (i === j) return;
-            const conflict = (q1.r === q2.r) || (q1.c === q2.c) || (q1.reg === q2.reg) ||
-                             (Math.abs(q1.r - q2.r) === 1 && Math.abs(q1.c - q2.c) === 1);
-            if (conflict) {
+
+            const rowConflict = q1.r === q2.r;
+            const colConflict = q1.c === q2.c;
+            const regConflict = q1.reg === q2.reg;
+            const diagConflict = Math.abs(q1.r - q2.r) <= 1 && Math.abs(q1.c - q2.c) <= 1;
+
+            if (rowConflict || colConflict || regConflict || diagConflict) {
                 document.getElementById(`cell-${q1.r}-${q1.c}`).classList.add('error');
-                document.getElementById(`cell-${q2.r}-${q2.c}`).classList.add('error');
             }
         });
     });
 }
 
-window.addEventListener('DOMContentLoaded', init);
+// 7. Navigatie functies
+function nextLevel() {
+    currentLevelIndex = (currentLevelIndex + 1) % QUEENS_LEVELS.length;
+    loadLevel(currentLevelIndex);
+}
+
+function resetLevel() {
+    loadLevel(currentLevelIndex);
+}
+
+// Start het spel als de pagina geladen is
+window.onload = init;
